@@ -1,0 +1,1 @@
+default_app_config = 'openedx.features.openedx_nodebb_discussion.apps.OpenedxNodebbDiscussionConfig'
