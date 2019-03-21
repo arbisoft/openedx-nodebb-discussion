@@ -29,8 +29,42 @@
 ```
 
 ---
+4. Add the following dictionary at the end of `lms.auth.json`
 
-4.  To add `openedx_nodebb_discussion` app into the installed apps add the 
+```
+    {
+        ...
+        ...
+        "OPENEDX_NODEBB_DISCUSSION": {
+            "SECRET": "Your secret",
+            "ALGORITHM": "Your algorithm"
+        }
+    }
+```
+---
+
+5. Add the following lines in `lms/aws.py`
+
+```
+    ##################### Openedx Nodebb Discussion Secrets ###########
+    OPENEDX_NODEBB_DISCUSSION = AUTH_TOKENS.get('OPENEDX_NODEBB_DISCUSSION', {})
+```
+
+   make sure that you put these lines after the following code portion
+    
+```
+    ############################## SECURE AUTH ITEMS ###############
+    # Secret things: passwords, access keys, etc.
+    
+    with open(CONFIG_ROOT / CONFIG_PREFIX + "auth.json") as auth_file:
+        AUTH_TOKENS = json.load(auth_file)
+
+```
+    
+
+---
+
+6.  To add `openedx_nodebb_discussion` app into the installed apps add the 
     following line in the `INSTALLED_APPS` list present in `lms/common.py` file.
 
 ```
@@ -42,7 +76,7 @@
 
 ---
 
-5.  Append these urls in `lms/urls.py`
+7.  Append these urls in `lms/urls.py`
 
 ```
     # add nodebb discussion endpoints
@@ -60,7 +94,7 @@
 
 ---
 
-6.  Add a entery point for our discussion tab in the following file
+8.  Add a entery point for our discussion tab in the following file
     `../edx-platfrom/setup.py`
 
 ```
@@ -74,30 +108,24 @@
 
 ---
 
-7.  After that change the `version number` which is availabe in the same file for example if it is 
+9.  After that change the `version number` which is availabe in the same file for example if it is 
     `0.11` change it to `0.12` and then go to `lms-shell` and your directory path should 
     be like this
 
     `/edx/app/edxapp/edx-platform#`
 
 
-    Here, run the following command 
+   Here, run the following command 
 
     `pip install -e .`
 
 
 ---
 
-8.  Go to studio using the following url
-
-    `localhost:18010` 
-
-    and add the following line
-
-    `"openedx_nodebb_discussion"`
-
-    in the advacned module list of the course in which you want to show 
-    `openedx_nodebb_discussion` tab.
+10.  Go to studio using the following url `localhost:18010` 
+    
+   and add the following line `"openedx_nodebb_discussion"`
+   in the advacned module list of the course in which you want to show `openedx_nodebb_discussion` tab.
 
 
 
