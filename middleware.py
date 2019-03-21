@@ -1,6 +1,6 @@
 import jwt
 
-from django.conf import settings
+from django.conf import settings as django_settings
 
 
 class UserSessionSharingMiddleware(object):
@@ -15,11 +15,11 @@ class UserSessionSharingMiddleware(object):
                 encoded_jwt = jwt.encode({'id': request.user.id,
                                           'username': request.user.username,
                                           'email': request.user.email},
-                                         settings.OPENEDX_NODEBB_DISCUSSION['SECRET'],
-                                         algorithm=settings.OPENEDX_NODEBB_DISCUSSION['ALGORITHM'])
-                response.set_cookie('token', encoded_jwt, domain="localhost")
+                                         django_settings.OPENEDX_NODEBB_DISCUSSION['SECRET'],
+                                         algorithm=django_settings.OPENEDX_NODEBB_DISCUSSION['ALGORITHM'])
+                response.set_cookie('token', encoded_jwt, domain=django_settings.NODEBB_DOMAIN)
             else:
-                response.delete_cookie('token', domain="localhost")
+                response.delete_cookie('token', domain=django_settings.NODEBB_DOMAIN)
         except AttributeError:
             pass
         return response

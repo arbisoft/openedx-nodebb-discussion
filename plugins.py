@@ -4,7 +4,9 @@ from django.conf import settings
 
 
 class NodeBBTab(EnrolledTab):
-    """A new course tab."""
+    """
+    NodeBBTab for Courses it will contain the embeded view of NodeBB Forum
+    """
 
     name = "openedx_nodebb_discussion"
     type = "openedx_nodebb_discussion"

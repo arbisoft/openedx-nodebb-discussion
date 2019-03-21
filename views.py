@@ -1,12 +1,11 @@
 from courseware.courses import get_course_with_access, has_access
+from django.conf import settings as django_settings
 from django.http import Http404
 from django.shortcuts import render_to_response
 from django.views.generic import TemplateView
 from django_comment_client.utils import has_discussion_privileges
 from opaque_keys.edx.keys import CourseKey
 from student.models import CourseEnrollment
-
-from . import is_feature_enabled
 
 
 class NodebbDashboardView(TemplateView):
@@ -23,17 +22,14 @@ class NodebbDashboardView(TemplateView):
         course_key = CourseKey.from_string(course_id)
         course = get_course_with_access(request.user, "load", course_key)
 
-        if not is_feature_enabled():
-            raise Http404
-
         if not CourseEnrollment.is_enrolled(request.user, course.id) and \
                 not has_access(request.user, 'staff', course, course.id):
             raise Http404
 
         user = request.user
-
         context = {
             "course": course,
+            "nodebb_url": django_settings.NODEBB_URL,
             "user_info": {
                 "username": user.username,
                 "privileged": has_discussion_privileges(user, course_key),

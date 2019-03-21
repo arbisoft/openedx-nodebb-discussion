@@ -10,7 +10,8 @@ class OpenedxNodebbDiscussionConfig(AppConfig):
     name = 'openedx.features.openedx_nodebb_discussion'
 
     def ready(self):
-        from django.conf import settings
-        settings.MIDDLEWARE_CLASSES.append(
-            'openedx.features.openedx_nodebb_discussion.middleware.UserSessionSharingMiddleware'
+        from django.conf import settings as django_settings
+        if hasattr(django_settings, 'MIDDLEWARE_CLASSES'):
+            django_settings.MIDDLEWARE_CLASSES.append(
+                'openedx.features.openedx_nodebb_discussion.middleware.UserSessionSharingMiddleware'
             )
