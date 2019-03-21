@@ -11,7 +11,7 @@ from . import is_feature_enabled
 
 class NodebbDashboardView(TemplateView):
     """
-    View methods related to the teams dashboard.
+    View methods related to the nodebb dashboard.
     """
 
     def get(self, request, course_id):
