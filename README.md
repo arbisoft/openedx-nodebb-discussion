@@ -12,7 +12,7 @@
 
 ---
 
-3.  Add `ENABLE_NODEBB_DISCUSSION` in the following files
+3.  Add `ENABLE_NODEBB_DISCUSSION` flag in the `FEATURES` in the following files
 
 
     - lms.env.json
@@ -20,6 +20,13 @@
 
 
     and set their values to   `true`
+
+```
+    FEATURES = {
+        ...
+        'ENABLE_NODEBB_DISCUSSION': true,
+    }
+```
 
 ---
 
