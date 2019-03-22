@@ -27,27 +27,41 @@
         'ENABLE_NODEBB_DISCUSSION': true,
     }
 ```
-
 ---
-4. Add the following dictionary at the end of `lms.auth.json`
+
+4.  Add the following key-value pair at the end of `lms.env.json`
+
+```
+    {
+        ...
+        ...
+        "NODEBB_URL": "YOUR NODEBB URL",
+        "NODEBB_DOMAIN": "YOUR NODEBB DOMAIN"
+    }
+```
+---
+5. Add the following dictionary at the end of `lms.auth.json`
 
 ```
     {
         ...
         ...
         "OPENEDX_NODEBB_DISCUSSION": {
-            "SECRET": "Your secret",
-            "ALGORITHM": "Your algorithm"
+            "DISCUSSION_JWT_SECRET": "Your secret",
+            "DISCUSSION_JWT_ALGORITHM": "Your algorithm"
         }
     }
 ```
 ---
 
-5. Add the following lines in `lms/aws.py`
+6. Add the following lines in `lms/aws.py`
 
 ```
     ##################### Openedx Nodebb Discussion Secrets ###########
     OPENEDX_NODEBB_DISCUSSION = AUTH_TOKENS.get('OPENEDX_NODEBB_DISCUSSION', {})
+    NODEBB_URL = ENV_TOKENS.get('NODEBB_URL', None)
+    NODEBB_DOMAIN = ENV_TOKENS.get('NODEBB_DOMAIN', None)
+
 ```
 
    make sure that you put these lines after the following code portion
@@ -64,7 +78,7 @@
 
 ---
 
-6.  To add `openedx_nodebb_discussion` app into the installed apps add the 
+7.  To add `openedx_nodebb_discussion` app into the installed apps add the 
     following line in the `INSTALLED_APPS` list present in `lms/common.py` file.
 
 ```
@@ -76,7 +90,7 @@
 
 ---
 
-7.  Append these urls in `lms/urls.py`
+8.  Append these urls in `lms/urls.py`
 
 ```
     # add nodebb discussion endpoints
@@ -94,7 +108,7 @@
 
 ---
 
-8.  Add a entery point for our discussion tab in the following file
+9.  Add a entery point for our discussion tab in the following file
     `../edx-platfrom/setup.py`
 
 ```
@@ -108,7 +122,7 @@
 
 ---
 
-9.  After that change the `version number` which is availabe in the same file for example if it is 
+10.  After that change the `version number` which is availabe in the same file for example if it is 
     `0.11` change it to `0.12` and then go to `lms-shell` and your directory path should 
     be like this
 
@@ -122,7 +136,7 @@
 
 ---
 
-10.  Go to studio using the following url `localhost:18010` 
+11.  Go to studio using the following url `localhost:18010` 
     
    and add the following line `"openedx_nodebb_discussion"`
    in the advacned module list of the course in which you want to show `openedx_nodebb_discussion` tab.
