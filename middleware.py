@@ -15,8 +15,9 @@ class UserSessionSharingMiddleware(object):
                 encoded_jwt = jwt.encode({'id': request.user.id,
                                           'username': request.user.username,
                                           'email': request.user.email},
-                                         django_settings.OPENEDX_NODEBB_DISCUSSION['SECRET'],
-                                         algorithm=django_settings.OPENEDX_NODEBB_DISCUSSION['ALGORITHM'])
+                                         django_settings.OPENEDX_NODEBB_DISCUSSION['DISCUSSION_JWT_SECRET'],
+                                         algorithm=django_settings.OPENEDX_NODEBB_DISCUSSION[
+                                             'DISCUSSION_JWT_ALGORITHM'])
                 response.set_cookie('token', encoded_jwt, domain=django_settings.NODEBB_DOMAIN)
             else:
                 response.delete_cookie('token', domain=django_settings.NODEBB_DOMAIN)

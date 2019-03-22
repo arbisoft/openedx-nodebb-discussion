@@ -15,9 +15,9 @@ class NodebbDashboardView(TemplateView):
 
     def get(self, request, course_id):
         """
-        Renders the teams dashboard, which is shown on the "Teams" tab.
-        Raises a 404 if the course specified by course_id does not exist, the
-        user is not registered for the course, or the teams feature is not enabled.
+        Renders the NODEBB DISCUSSION dashboard, which is shown on the NODEBB DISCUSSION
+        tab. Raises a 404 if the course specified by course_id does not exist, the
+        user is not registered for the course, or the NODEBB DISCUSSION feature is not enabled.
         """
         course_key = CourseKey.from_string(course_id)
         course = get_course_with_access(request.user, "load", course_key)
