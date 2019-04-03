@@ -1,142 +1,141 @@
 # Manual to add openedx_nodebb_discusson in your edx platform
 
-1.  Clone this repo into `openedx_nodebb_discussion` folder using the given command
+Clone this repo into `openedx_nodebb_discussion` folder using the given command
 
-    `git clone https://github.com/arbisoft/openedx-nodebb-discussion.git openedx_nodebb_discussion`
-
----
-
-2.  Copy this folder and place this at the following location in edx codebase
-
-    `../edx-platform/openedx/features/`
+`git clone https://github.com/arbisoft/openedx-nodebb-discussion.git openedx_nodebb_discussion`
 
 ---
 
-3.  Add `ENABLE_NODEBB_DISCUSSION` flag in the `FEATURES` in the following files
+Copy this folder and place this at the following location in edx codebase
+
+`../edx-platform/openedx/features/`
+
+---
+
+Add `ENABLE_NODEBB_DISCUSSION` flag in the `FEATURES` in the following files
 
 
-    - lms.env.json
-    - cms.env.json
+- lms.env.json
+- cms.env.json
 
 
-    and set their values to   `true`
+and set their values to   `true`
 
 ```
-    FEATURES = {
-        ...
-        'ENABLE_NODEBB_DISCUSSION': true,
+FEATURES = {
+    ...
+    'ENABLE_NODEBB_DISCUSSION': true,
+}
+```
+---
+
+Add the following key-value pair at the end of `lms.env.json`
+
+```
+{
+    ...
+    ...
+    "NODEBB_URL": "YOUR NODEBB URL",
+    "NODEBB_DOMAIN": "YOUR NODEBB DOMAIN"
+}
+```
+---
+Add the following dictionary at the end of `lms.auth.json`
+
+```
+{
+    ...
+    ...
+    "OPENEDX_NODEBB_DISCUSSION": {
+        "DISCUSSION_JWT_SECRET": "Your secret",
+        "DISCUSSION_JWT_ALGORITHM": "Your algorithm"
     }
+}
 ```
 ---
 
-4.  Add the following key-value pair at the end of `lms.env.json`
+Add the following lines in `lms/env/aws.py`
 
 ```
-    {
-        ...
-        ...
-        "NODEBB_URL": "YOUR NODEBB URL",
-        "NODEBB_DOMAIN": "YOUR NODEBB DOMAIN"
-    }
-```
----
-5. Add the following dictionary at the end of `lms.auth.json`
-
-```
-    {
-        ...
-        ...
-        "OPENEDX_NODEBB_DISCUSSION": {
-            "DISCUSSION_JWT_SECRET": "Your secret",
-            "DISCUSSION_JWT_ALGORITHM": "Your algorithm"
-        }
-    }
-```
----
-
-6. Add the following lines in `lms/aws.py`
-
-```
-    ##################### Openedx Nodebb Discussion Secrets ###########
-    OPENEDX_NODEBB_DISCUSSION = AUTH_TOKENS.get('OPENEDX_NODEBB_DISCUSSION', {})
-    NODEBB_URL = ENV_TOKENS.get('NODEBB_URL', None)
-    NODEBB_DOMAIN = ENV_TOKENS.get('NODEBB_DOMAIN', None)
+##################### Openedx Nodebb Discussion Secrets ###########
+OPENEDX_NODEBB_DISCUSSION = AUTH_TOKENS.get('OPENEDX_NODEBB_DISCUSSION', {})
+NODEBB_URL = ENV_TOKENS.get('NODEBB_URL', None)
+NODEBB_DOMAIN = ENV_TOKENS.get('NODEBB_DOMAIN', None)
 
 ```
 
-   make sure that you put these lines after the following code portion
+make sure that you put these lines after the following code portion
     
 ```
-    ############################## SECURE AUTH ITEMS ###############
-    # Secret things: passwords, access keys, etc.
-    
-    with open(CONFIG_ROOT / CONFIG_PREFIX + "auth.json") as auth_file:
-        AUTH_TOKENS = json.load(auth_file)
+############################## SECURE AUTH ITEMS ###############
+# Secret things: passwords, access keys, etc.
+
+with open(CONFIG_ROOT / CONFIG_PREFIX + "auth.json") as auth_file:
+    AUTH_TOKENS = json.load(auth_file)
 
 ```
     
 
 ---
 
-7.  To add `openedx_nodebb_discussion` app into the installed apps add the 
-    following line in the `INSTALLED_APPS` list present in `lms/common.py` file.
+To add `openedx_nodebb_discussion` app into the installed apps add the 
+following line in the `INSTALLED_APPS` list present in `lms/common.py` file.
 
 ```
-    INSTALLED_APPS = [
-        ...
-        'openedx.features.openedx_nodebb_discussion.apps.OpenedxNodebbDiscussionConfig',
+INSTALLED_APPS = [
+    ...
+    'openedx.features.openedx_nodebb_discussion.apps.OpenedxNodebbDiscussionConfig',
+]
+```
+
+---
+
+Append these urls in `lms/urls.py`
+
+```
+# add nodebb discussion endpoints
+if settings.FEATURES.get('ENABLE_NODEBB_DISCUSSION'):
+    urlpatterns += [
+        url(
+            r'^courses/{}/nodebb'.format(
+                settings.COURSE_ID_PATTERN,
+            ),
+            include('openedx.features.openedx_nodebb_discussion.urls'),
+            name='nodebb_discussion_endpoints',
+        ),
     ]
 ```
 
 ---
 
-8.  Append these urls in `lms/urls.py`
+Add a entery point for our discussion tab in the following file
+`../edx-platfrom/setup.py`
 
 ```
-    # add nodebb discussion endpoints
-    if settings.FEATURES.get('ENABLE_NODEBB_DISCUSSION'):
-        urlpatterns += [
-            url(
-                r'^courses/{}/nodebb'.format(
-                    settings.COURSE_ID_PATTERN,
-                ),
-                include('openedx.features.openedx_nodebb_discussion.urls'),
-                name='nodebb_discussion_endpoints',
-            ),
-        ]
+entry_points={
+        "openedx.course_tab": [
+            "openedx_nodebb_discussion = openedx.features.openedx_nodebb_discussion.plugins:NodeBBTab",
+            .....
+        ],
+}
 ```
 
 ---
 
-9.  Add a entery point for our discussion tab in the following file
-    `../edx-platfrom/setup.py`
+After that change the `version number` which is availabe in the same file for example if it is `0.11` change it to `0.12` and then go to `lms-shell` and your directory path should 
+ be like this
 
-```
-    entry_points={
-            "openedx.course_tab": [
-                "openedx_nodebb_discussion = openedx.features.openedx_nodebb_discussion.plugins:NodeBBTab",
-        .....
-            ],
-    }
-```
-
----
-
-10.  After that change the `version number` which is availabe in the same file for example if it is 
-    `0.11` change it to `0.12` and then go to `lms-shell` and your directory path should 
-    be like this
-
-    `/edx/app/edxapp/edx-platform#`
+`/edx/app/edxapp/edx-platform#`
 
 
-   Here, run the following command 
+Here, run the following command 
 
-    `pip install -e .`
+`pip install -e .`
 
 
 ---
 
-11.  Go to studio using the following url `localhost:18010` 
+Go to studio using the following url `localhost:18010` 
     
    and add the following line `"openedx_nodebb_discussion"`
    in the advacned module list of the course in which you want to show `openedx_nodebb_discussion` tab.
