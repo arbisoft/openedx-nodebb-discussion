@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 from openedx.features.openedx_nodebb_discussion.client import Client
 
-from .utils import save_relation_into_db, get_nodebb_uid_from_username
+from .utils import save_user_relation_into_db, get_nodebb_uid_from_username
 
 
 class NodeBBUser(Client):
@@ -28,7 +28,7 @@ class NodeBBUser(Client):
         response_code, json_response = self.post('/api/v2/users', **kwargs)
 
         if response_code == 200:
-            save_relation_into_db(username=kwargs['username'], nodebb_uid=json_response['uid'])
+            save_user_relation_into_db(username=kwargs['username'], nodebb_uid=json_response['uid'])
 
         return response_code, json_response
 

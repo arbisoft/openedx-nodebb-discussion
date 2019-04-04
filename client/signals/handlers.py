@@ -1,11 +1,12 @@
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
-from student.models import UserProfile
+from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
 from openedx.features.openedx_nodebb_discussion.client.tasks import (
     task_create_user_on_nodebb, task_sync_user_profile_info_with_nodebb,
-    task_delete_user_from_nodebb
+    task_delete_user_from_nodebb, task_create_category_on_nodebb
 )
+from student.models import UserProfile
 
 
 @receiver(post_save, sender=User)
@@ -43,3 +44,12 @@ def sync_user_profile_info_with_nodebb(sender, instance, **kwargs):
 @receiver(pre_delete, sender=User)
 def delete_user_from_nodebb(sender, instance, **kwargs):
     task_delete_user_from_nodebb.delay(username=instance.username)
+
+
+@receiver(post_save, sender=CourseOverview)
+def create_category_on_nodebb(sender, instance, created, update_fields, **kwargs):
+    if created:
+        category_data = {
+            'name': '{}-{}-{}-{}'.format(instance.display_name, instance.id.org, instance.id.course, instance.id.run),
+        }
+    task_create_category_on_nodebb.delay(course_id=instance.id, **category_data)
