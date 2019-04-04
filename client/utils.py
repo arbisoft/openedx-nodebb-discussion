@@ -12,5 +12,5 @@ def save_relation_into_db(username, nodebb_uid):
 
 def get_nodebb_uid_from_username(username):
     edx_user = get_object_or_404(User, username=username)
-    uid = NodeBBUserRelation.objects.filter(edx_uid=edx_user)[0].nodebb_uid
-    return uid
+    user_relation = get_object_or_404(NodeBBUserRelation, edx_uid=edx_user)
+    return user_relation.nodebb_uid
