@@ -2,6 +2,7 @@
 
 ### Python artifacts
 *.pyc
+migrations/
 
 ### Editor and IDE artifacts
 *~

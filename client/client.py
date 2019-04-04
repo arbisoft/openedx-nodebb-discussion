@@ -2,6 +2,7 @@ import json
 
 import requests
 import urlparse
+from django.conf import settings as django_settings
 
 
 class Client(object):
@@ -13,7 +14,7 @@ class Client(object):
         self.endpoint = "http://172.16.16.24:4568"
         self.admin_uid = "1"
         self.headers = {
-            'authorization': "Bearer d50a2093-82f7-4bdd-9f8b-2433a0e315be",
+            'authorization': "Bearer {}".format(django_settings.OPENEDX_NODEBB_DISCUSSION['NODEBB_API_TOKEN']),
             'content-type': "application/json"
         }
 

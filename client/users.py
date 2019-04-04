@@ -5,7 +5,7 @@
 """
 from __future__ import unicode_literals
 
-from openedx.features.nodebbclient.client import Client
+from openedx.features.openedx_nodebb_discussion.client import Client
 
 from .utils import save_relation_into_db, get_nodebb_uid_from_username
 
