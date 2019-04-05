@@ -1,10 +1,14 @@
 """
 Django management command to create categories at nodeBB corresponding to edx-platform courses.
 """
+from logging import getLogger
+
 from django.core.management.base import BaseCommand
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
 from openedx.features.openedx_nodebb_discussion.client.tasks import task_create_category_on_nodebb
 from openedx.features.openedx_nodebb_discussion.models import NodeBBCategoryRelation
+
+log = getLogger(__name__)
 
 
 class Command(BaseCommand):
@@ -29,3 +33,4 @@ class Command(BaseCommand):
                     ),
                 }
                 task_create_category_on_nodebb.delay(course_id=edx_course.id, **category_data)
+        log.info('Command has been executed')

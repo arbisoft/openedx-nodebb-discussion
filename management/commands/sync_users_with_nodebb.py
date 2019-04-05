@@ -1,13 +1,17 @@
 """
 Django management command to create users at nodeBB corresponding to edx-platform users.
 """
+from logging import getLogger
+
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
-from student.models import UserProfile
 from openedx.features.openedx_nodebb_discussion.client.tasks import (
     task_create_user_on_nodebb, task_sync_user_profile_info_with_nodebb
 )
 from openedx.features.openedx_nodebb_discussion.models import NodeBBUserRelation
+from student.models import UserProfile
+
+log = getLogger(__name__)
 
 
 class Command(BaseCommand):
@@ -42,3 +46,4 @@ class Command(BaseCommand):
                         'birthday': '01/01/%s' % profile[0].year_of_birth
                     }
                     task_sync_user_profile_info_with_nodebb.delay(username=edx_user.username, **profile_data)
+        log.info('Command has been executed.')
