@@ -12,10 +12,10 @@ from openedx.features.openedx_nodebb_discussion.models import NodeBBUserRelation
 
 class Command(BaseCommand):
     help = """
-    This command creates users in nodeBB according to all UserExtendedProfile instances in edx-platform.
+    This command creates users in nodeBB according to all User and UserProfile instances in edx-platform.
 
     example:
-        manage.py ... create_nodebb_users
+        manage.py ... sync_users_with_nodebb
     """
 
     def handle(self, *args, **options):
