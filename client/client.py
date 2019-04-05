@@ -50,23 +50,6 @@ class Client(object):
     def get(self, path, **kwargs):
         return self._request('GET', path, **kwargs)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     def post(self, path, **kwargs):
         return self._request('POST', path, **kwargs)
 
