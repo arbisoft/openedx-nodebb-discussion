@@ -11,7 +11,7 @@ class Client(object):
         self._configure()
 
     def _configure(self):
-        self.endpoint = "http://172.16.16.24:4568"
+        self.endpoint = "http://172.16.16.27:4568"
         self.admin_uid = "1"
         self.headers = {
             'authorization': "Bearer {}".format(django_settings.OPENEDX_NODEBB_DISCUSSION['NODEBB_API_TOKEN']),
@@ -49,6 +49,23 @@ class Client(object):
 
     def get(self, path, **kwargs):
         return self._request('GET', path, **kwargs)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     def post(self, path, **kwargs):
         return self._request('POST', path, **kwargs)
