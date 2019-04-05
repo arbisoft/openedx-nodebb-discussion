@@ -14,8 +14,8 @@ class Client(object):
         self.endpoint = "http://172.16.16.27:4568"
         self.admin_uid = "1"
         self.headers = {
-            'authorization': "Bearer {}".format(django_settings.OPENEDX_NODEBB_DISCUSSION['NODEBB_API_TOKEN']),
-            'content-type': "application/json"
+            'Authorization': "Bearer {}".format(django_settings.OPENEDX_NODEBB_DISCUSSION['NODEBB_API_TOKEN']),
+            'Content-Type': "application/json"
         }
 
     def _request(self, method, path, **kwargs):
@@ -33,19 +33,19 @@ class Client(object):
             headers=self.headers,
             data=json.dumps(kwargs)
         )
-        code, reason = response.status_code, response.reason
+        status_code, reason = response.status_code, response.reason
 
         if response.reason != 'OK':  # Not a success response.
-            return code, reason
+            return status_code, reason
 
         # ValueError occurs when `.json()` reads invalid JSON.
         try:
             json_response = response.json()
             if 'payload' in json_response:
                 json_response = json_response['payload']
-            return code, json_response
+            return status_code, json_response
         except ValueError:
-            return code, {}
+            return status_code, {}
 
     def get(self, path, **kwargs):
         return self._request('GET', path, **kwargs)
