@@ -20,5 +20,20 @@ def save_category_relation_into_db(course_id, category_id):
     category_relation = NodeBBCategoryRelation()
     category_relation.course_key = course_id
     category_relation.nodebb_cid = category_id
-    category_relation.nodebb_group_slug = ""
     category_relation.save()
+
+
+def save_group_relation_into_db(course_id, group_slug):
+    group_relation = get_object_or_404(NodeBBCategoryRelation, course_key=course_id)
+    group_relation.nodebb_group_slug = group_slug
+    group_relation.save()
+
+
+def get_category_id_from_course_id(course_id):
+    category_relation = get_object_or_404(NodeBBCategoryRelation, course_key=course_id)
+    return category_relation.nodebb_cid
+
+
+def get_group_slug_from_course_id(course_id):
+    category_relation = get_object_or_404(NodeBBCategoryRelation, course_key=course_id)
+    return category_relation.nodebb_group_slug

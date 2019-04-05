@@ -48,6 +48,7 @@ def delete_user_from_nodebb(sender, instance, **kwargs):
 
 @receiver(post_save, sender=CourseOverview)
 def create_category_on_nodebb(sender, instance, created, update_fields, **kwargs):
+    #import pdb;pdb.set_trace()
     if created:
         category_data = {
             'name': '{}-{}-{}-{}'.format(instance.display_name, instance.id.org, instance.id.course, instance.id.run),

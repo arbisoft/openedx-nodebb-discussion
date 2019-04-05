@@ -14,7 +14,7 @@ class NodeBBUserRelation(models.Model):
 class NodeBBCategoryRelation(models.Model):
     course_key = CourseKeyField(max_length=255, db_index=True)
     nodebb_cid = models.IntegerField(unique=True)
-    nodebb_group_slug = models.CharField(max_length=255, blank=True)
+    nodebb_group_slug = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return str(self.course_key)
