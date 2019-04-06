@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
-from openedx.core.djangoapps.xmodule_django.models import CourseKeyField
+
+from opaque_keys.edx.django.models import CourseKeyField
 
 
 class NodeBBUserRelation(models.Model):

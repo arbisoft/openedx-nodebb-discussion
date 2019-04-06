@@ -19,7 +19,7 @@ def handle_response(caller, task_name, job_type, status_code, response, username
     Logs the response of the specific NodeBB API call
     """
     if status_code >= 500:
-        log.info('Retrying: {} task for {}: {}'.format(task_name, job_type, username))
+        log.warning('Retrying: {} task for {}: {}'.format(task_name, job_type, username))
         caller.retry()
     elif status_code >= 400:
         log.error('Failure: {} task for {}: {}, status_code: {}, response: {}'
@@ -66,7 +66,6 @@ def _task_create_group_on_nodebb(course_id, **group_data):
 
 @task(default_retry_delay=RETRY_DELAY, max_retries=None)
 def _task_delete_default_permission_of_category_on_nodebb(course_id):
-    import pdb;pdb.set_trace()
     category_id = get_category_id_from_course_id(course_id)
     status_code, response = NodeBBCategory().delete_default_permissions(category_id)
     handle_response(_task_delete_default_permission_of_category_on_nodebb, "Default Permission Deletion", "Group",
@@ -79,6 +78,11 @@ def _task_delete_default_permission_of_category_on_nodebb(course_id):
 
 @task(default_retry_delay=RETRY_DELAY, max_retries=None)
 def _task_add_course_group_permission_of_category_on_nodebb(course_id):
+    """
+
+    :param course_id:
+    :return:
+    """
     group_slug = get_group_slug_from_course_id(course_id)
     category_id = get_category_id_from_course_id(course_id)
     status_code, response = NodeBBCategory().add_course_group_permission(category_id, group_slug)

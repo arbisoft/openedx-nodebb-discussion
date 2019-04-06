@@ -18,7 +18,7 @@ def create_and_update_user_on_nodebb(sender, instance, created, update_fields, *
             'joindate': instance.date_joined.strftime("%s")
         }
         task_create_user_on_nodebb.delay(**user_data)
-    elif update_fields is not None and 'last_login' not in update_fields:
+    elif update_fields and 'last_login' not in update_fields:
         """
             On login `last_login` field change for ignoring this change we used this check.
             We are expecting last_login will never changed from django admin panel.
@@ -52,4 +52,4 @@ def create_category_on_nodebb(sender, instance, created, update_fields, **kwargs
         category_data = {
             'name': '{}-{}-{}-{}'.format(instance.display_name, instance.id.org, instance.id.course, instance.id.run),
         }
-    task_create_category_on_nodebb.delay(course_id=instance.id, **category_data)
+        task_create_category_on_nodebb.delay(course_id=instance.id, **category_data)
