@@ -6,7 +6,7 @@ from openedx.features.openedx_nodebb_discussion.client.categories import NodeBBC
 from openedx.features.openedx_nodebb_discussion.client.groups import NodeBBGroup
 from openedx.features.openedx_nodebb_discussion.client.users import NodeBBUser
 from openedx.features.openedx_nodebb_discussion.client.utils import (
-    get_category_id_from_course_id, get_group_slug_from_course_id
+    get_category_id_from_course_id, get_group_slug_from_course_id, get_nodebb_uid_from_username
 )
 
 RETRY_DELAY = 10
@@ -91,3 +91,19 @@ def _task_add_course_group_permission_of_category_on_nodebb(course_id):
                     status_code,
                     response,
                     str(course_id))
+
+
+@task(default_retry_delay=RETRY_DELAY, max_retries=None)
+def task_join_group_on_nodebb(username, course_id):
+    group_slug = get_group_slug_from_course_id(course_id)
+    uid = get_nodebb_uid_from_username(username)
+    status_code, response = NodeBBGroup().add_member(uid, group_slug, **{})
+    handle_response(task_join_group_on_nodebb, "Group Membership", "Join Group", status_code, response, username)
+
+
+@task(default_retry_delay=RETRY_DELAY, max_retries=None)
+def task_unjoin_group_on_nodebb(username, course_id):
+    group_slug = get_group_slug_from_course_id(course_id)
+    uid = get_nodebb_uid_from_username(username)
+    status_code, response = NodeBBGroup().delete_member(uid, group_slug, **{})
+    handle_response(task_unjoin_group_on_nodebb, "Group Membership", "Unjoin Group", status_code, response, username)

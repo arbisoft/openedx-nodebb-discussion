@@ -4,9 +4,10 @@ from django.dispatch import receiver
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
 from openedx.features.openedx_nodebb_discussion.client.tasks import (
     task_create_user_on_nodebb, task_sync_user_profile_info_with_nodebb,
-    task_delete_user_from_nodebb, task_create_category_on_nodebb
+    task_delete_user_from_nodebb, task_create_category_on_nodebb, task_join_group_on_nodebb,
+    task_unjoin_group_on_nodebb
 )
-from student.models import UserProfile
+from student.models import UserProfile, CourseEnrollment
 
 
 @receiver(post_save, sender=User)
@@ -53,3 +54,11 @@ def create_category_on_nodebb(sender, instance, created, update_fields, **kwargs
             'name': '{}-{}-{}-{}'.format(instance.display_name, instance.id.org, instance.id.course, instance.id.run),
         }
         task_create_category_on_nodebb.delay(course_id=instance.id, **category_data)
+
+
+@receiver(post_save, sender=CourseEnrollment)
+def manage_membership_on_nodebb_group(sender, instance, **kwargs):
+    if instance.is_active:
+        task_join_group_on_nodebb.delay(instance.username, instance.course_id)
+    elif not instance.is_active and not kwargs['created']:
+        task_unjoin_group_on_nodebb.delay(instance.username, instance.course_id)
