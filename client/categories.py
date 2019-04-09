@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-    Category Class for NodeBB Client
+Category Class for NodeBB Client
 """
 from __future__ import unicode_literals
 
@@ -39,7 +39,8 @@ class NodeBBCategory(Client):
         super(NodeBBCategory, self).__init__()
 
     def create(self, course_id, **kwargs):
-        """Creates a new NodeBB Category.
+        """
+        Creates a new NodeBB Category.
 
         Args:
             course_id: Course_Key
@@ -59,6 +60,11 @@ class NodeBBCategory(Client):
         return response_code, json_response
 
     def delete_default_permissions(self, category_id):
+        """
+        By default whenever a new category is created in nodebb, the default groups have some default previliges 
+        of that category. So, first deletes those default previliges in order to assign some specific previliges 
+        to the groups that are related to that category.
+        """
         payload = {
             "privileges": self.privileges,
             "groups": self.default_groups
@@ -68,6 +74,9 @@ class NodeBBCategory(Client):
         return response_code, json_response
 
     def add_course_group_permission(self, category_id, group_slug):
+        """
+        Assigns previliges to the specific category using group.
+        """
         payload = {
             "privileges": self.privileges,
             "groups": [
