@@ -8,7 +8,7 @@ from django.core.management.base import BaseCommand
 from openedx.features.openedx_nodebb_discussion.client.tasks import (
     task_create_user_on_nodebb, task_sync_user_profile_info_with_nodebb
 )
-from openedx.features.openedx_nodebb_discussion.models import NodeBBUserRelation
+from openedx.features.openedx_nodebb_discussion.models import EdxNodeBBUser
 from student.models import UserProfile
 
 log = getLogger(__name__)
@@ -23,7 +23,7 @@ class Command(BaseCommand):
     """
 
     def handle(self, *args, **options):
-        nodebb_relations = NodeBBUserRelation.objects.all()
+        nodebb_relations = EdxNodeBBUser.objects.all()
         edx_users = User.objects.all()
         user_profiles = UserProfile.objects.all()
 

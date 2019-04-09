@@ -6,6 +6,7 @@ from django.views.generic import TemplateView
 from django_comment_client.utils import has_discussion_privileges
 from opaque_keys.edx.keys import CourseKey
 from student.models import CourseEnrollment
+from openedx.features.openedx_nodebb_discussion.client.utils import get_category_id_from_course_id
 
 
 class NodebbDashboardView(TemplateView):
@@ -21,7 +22,7 @@ class NodebbDashboardView(TemplateView):
         """
         course_key = CourseKey.from_string(course_id)
         course = get_course_with_access(request.user, "load", course_key)
-
+        category_id = get_category_id_from_course_id(course_key)
         if not CourseEnrollment.is_enrolled(request.user, course.id) and \
                 not has_access(request.user, 'staff', course, course.id):
             raise Http404
@@ -30,6 +31,7 @@ class NodebbDashboardView(TemplateView):
         context = {
             "course": course,
             "nodebb_url": django_settings.NODEBB_URL,
+            "category_id": category_id,
             "user_info": {
                 "username": user.username,
                 "privileged": has_discussion_privileges(user, course_key),

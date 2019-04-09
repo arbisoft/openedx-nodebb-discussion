@@ -67,13 +67,17 @@ class NodeBBCategory(Client):
 
         return response_code, json_response
 
-    def add_course_group_permission(self, category_id, group_slug):
+    def add_course_group_permission(self, category_id, group_name):
         payload = {
             "privileges": self.privileges,
             "groups": [
-                group_slug
+                group_name
             ]
         }
         response_code, json_response = self.put('/api/v2/categories/{}/privileges'.format(category_id), **payload)
 
+        return response_code, json_response
+
+    def delete_category(self, category_id):
+        response_code, json_response = self.delete('/api/v2/categories/{}'.format(category_id))
         return response_code, json_response
