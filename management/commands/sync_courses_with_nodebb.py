@@ -6,7 +6,7 @@ from logging import getLogger
 from django.core.management.base import BaseCommand
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
 from openedx.features.openedx_nodebb_discussion.client.tasks import task_create_category_on_nodebb
-from openedx.features.openedx_nodebb_discussion.models import NodeBBCategoryRelation
+from openedx.features.openedx_nodebb_discussion.models import EdxNodeBBCategory
 
 log = getLogger(__name__)
 
@@ -21,16 +21,17 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         edx_courses = CourseOverview.objects.all()
-        nodebb_categories = NodeBBCategoryRelation.objects.all()
+        nodebb_categories = EdxNodeBBCategory.objects.all()
 
         for edx_course in edx_courses:
             category_relation = nodebb_categories.filter(course_key=edx_course.id)
             if not category_relation:
-                category_data = {
+                course_data = {
                     'name': '{}-{}-{}-{}'.format(
                         edx_course.display_name, edx_course.id.org, edx_course.id.course,
                         edx_course.id.run
                     ),
                 }
-                task_create_category_on_nodebb.delay(course_id=edx_course.id, **category_data)
+                task_create_category_on_nodebb.delay(course_id=edx_course.id, course_name=edx_course.display_name,
+                                                     **course_data)
         log.info('Command has been executed')

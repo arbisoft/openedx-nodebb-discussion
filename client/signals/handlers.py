@@ -10,9 +10,12 @@ from django.dispatch import receiver
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
 from openedx.features.openedx_nodebb_discussion.client.tasks import (
     task_create_user_on_nodebb, task_sync_user_profile_info_with_nodebb,
-    task_delete_user_from_nodebb, task_create_category_on_nodebb, task_join_group_on_nodebb,
+    task_delete_user_from_nodebb, task_create_category_on_nodebb,
+    task_delete_category_from_nodebb, task_delete_user_from_nodebb,
+    task_create_category_on_nodebb, task_join_group_on_nodebb,
     task_unjoin_group_on_nodebb
 )
+from openedx.features.openedx_nodebb_discussion.models import EdxNodeBBCategory
 from student.models import UserProfile, CourseEnrollment
 
 
@@ -70,10 +73,16 @@ def create_category_on_nodebb(sender, instance, created, update_fields, **kwargs
     Whenever a new course is created in openedx, creates a new category in nodebb.
     """
     if created:
-        category_data = {
+        course_data = {
             'name': '{}-{}-{}-{}'.format(instance.display_name, instance.id.org, instance.id.course, instance.id.run),
         }
-        task_create_category_on_nodebb.delay(course_id=instance.id, **category_data)
+        task_create_category_on_nodebb.delay(course_id=instance.id, course_name=instance.display_name, **course_data)
+
+
+@receiver(pre_delete, sender=EdxNodeBBCategory)
+def delete_category_from_nodebb(sender, instance, **kwargs):
+    category_id = instance.nodebb_cid
+    task_delete_category_from_nodebb.delay(category_id)
 
 
 @receiver(post_save, sender=CourseEnrollment)
