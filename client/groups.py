@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-    Group Class for NodeBB Client
+Group Class for NodeBB Client
 """
 from __future__ import unicode_literals
 
 from openedx.features.openedx_nodebb_discussion.client import Client
 
-from openedx.features.openedx_nodebb_discussion.client.utils import save_group_relation_into_db, get_group_slug_from_course_id, get_nodebb_uid_from_username
+from openedx.features.openedx_nodebb_discussion.client.utils import save_group_relation_into_db, \
+    get_group_slug_from_course_id, get_nodebb_uid_from_username
 
 
 class NodeBBGroup(Client):
@@ -15,7 +16,8 @@ class NodeBBGroup(Client):
         super(NodeBBGroup, self).__init__()
 
     def create(self, course_id, **kwargs):
-        """Creates a new NodeBB Group.
+        """
+        Creates a new NodeBB Group.
 
         Args:
 
@@ -38,7 +40,8 @@ class NodeBBGroup(Client):
         return response_code, json_response
 
     def add_member(self, uid, group_slug, **kwargs):
-        """Add member to the nodebb group.
+        """
+        Add member to the nodebb group.
 
         Returns:
             tuple: Tuple in the form (response_code, json_response)
@@ -47,7 +50,8 @@ class NodeBBGroup(Client):
         return self.put('/api/v2/groups/%s/membership/%s' % (group_slug, uid), **kwargs)
 
     def delete_member(self, uid, group_slug, **kwargs):
-        """Delete member from nodebb group.
+        """
+        Delete member from nodebb group.
 
         Returns:
             tuple: Tuple in the form (response_code, json_response)

@@ -73,9 +73,11 @@ class NodeBBCategory(Client):
 
         return response_code, json_response
 
-    def add_course_group_permission(self, category_id, group_slug):
+    def add_course_group_permission(self, category_id, group_name):
         """
-        Assigns previliges to the specific category using group.
+        Assigns privileges to the specific category using group.
+        In order to do any type of interaction nodebb uses group_slug, but to assign
+        privileges it uses group_name that's why gorup_name is sent.
         """
         payload = {
             "privileges": self.privileges,

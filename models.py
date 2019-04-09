@@ -1,3 +1,6 @@
+"""
+Models to save required data to sync edx with nodebb.
+"""
 from django.contrib.auth.models import User
 from django.db import models
 

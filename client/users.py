@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-    User Class for NodeBB Client
+User Class for NodeBB Client
 """
 from __future__ import unicode_literals
 
@@ -15,7 +15,8 @@ class NodeBBUser(Client):
         super(NodeBBUser, self).__init__()
 
     def create(self, **kwargs):
-        """Creates a new NodeBB user.
+        """
+        Creates a new NodeBB user.
 
         Args:
             **kwargs: All other accepted user properties. You can find out
@@ -37,7 +38,8 @@ class NodeBBUser(Client):
         return self.put(endpoint, **kwargs)
 
     def update(self, username, **kwargs):
-        """Updates the user's NodeBB user properties.
+        """
+        Updates the user's NodeBB user properties.
 
         Accepted user properties can be found by referring to `updateProfile`.
         For a quick reference these are the accepted fields:
@@ -57,7 +59,8 @@ class NodeBBUser(Client):
         return self._update(uid, '/api/v2/users/%s' % uid, **kwargs)
 
     def delete_user(self, username):
-        """Removes the associated NodeBB user.
+        """
+        Removes the associated NodeBB user.
 
         Warning! This operation is irreversible. Note that if `uid` is None
         then, no requests will be made and a 404 will be returned.

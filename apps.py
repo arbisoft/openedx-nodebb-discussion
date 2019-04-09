@@ -5,7 +5,7 @@ from django.apps import AppConfig
 
 class OpenedxNodebbDiscussionConfig(AppConfig):
     """
-        Application Configuration for OPENEDX_NODEBB_DISCUSSION.
+    Application Configuration for OPENEDX_NODEBB_DISCUSSION.
     """
     name = 'openedx.features.openedx_nodebb_discussion'
 

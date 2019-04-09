@@ -1,3 +1,6 @@
+"""
+Base class which contains the basic methods to interaction with the write api of nodebb.
+"""
 import json
 
 import requests
@@ -11,7 +14,7 @@ class Client(object):
         self._configure()
 
     def _configure(self):
-        self.endpoint = "http://192.168.100.2:4568"
+        self.endpoint = "http://172.16.16.27:4568"
         self.admin_uid = "1"
         self.headers = {
             'Authorization': "Bearer {}".format(django_settings.OPENEDX_NODEBB_DISCUSSION['NODEBB_API_TOKEN']),
