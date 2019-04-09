@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 from openedx.features.openedx_nodebb_discussion.client import Client
 
-from .utils import save_group_relation_into_db
+from openedx.features.openedx_nodebb_discussion.client.utils import save_group_relation_into_db, get_group_slug_from_course_id, get_nodebb_uid_from_username
 
 
 class NodeBBGroup(Client):
@@ -36,3 +36,21 @@ class NodeBBGroup(Client):
     def delete_group(self, group_slug):
         response_code, json_response = self.delete('/api/v2/groups/{}'.format(group_slug))
         return response_code, json_response
+
+    def add_member(self, uid, group_slug, **kwargs):
+        """Add member to the nodebb group.
+
+        Returns:
+            tuple: Tuple in the form (response_code, json_response)
+
+        """
+        return self.put('/api/v2/groups/%s/membership/%s' % (group_slug, uid), **kwargs)
+
+    def delete_member(self, uid, group_slug, **kwargs):
+        """Delete member from nodebb group.
+
+        Returns:
+            tuple: Tuple in the form (response_code, json_response)
+
+        """
+        return self.delete('/api/v2/groups/%s/membership/%s' % (group_slug, uid), **kwargs)
