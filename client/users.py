@@ -1,35 +1,40 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-User Class for NodeBB Client
+Contains the User Class for NodeBB Client
 """
 from __future__ import unicode_literals
 
 from openedx.features.openedx_nodebb_discussion.client import Client
-
-from .utils import save_user_relation_into_db, get_nodebb_uid_from_username
+from openedx.features.openedx_nodebb_discussion.client.utils import (
+    save_user_relation_into_db, get_nodebb_uid_from_username
+)
 
 
 class NodeBBUser(Client):
+    """
+    User Class responsible to make connection with NodeBB Client for users related operations.
+    """
+
     def __init__(self):
         super(NodeBBUser, self).__init__()
 
-    def create(self, **kwargs):
+    def create(self, **payload):
         """
         Creates a new NodeBB user.
 
         Args:
-            **kwargs: All other accepted user properties. You can find out
+            **payload (dictionary): All other accepted user properties. You can find out
                 what they are by referring to `updateProfile`.
 
         Returns:
-            tuple: Tuple in the form (response_code, json_response)
+            tuple: Tuple in the form (response_code, json_response) received from requests call.
 
         """
-        response_code, json_response = self.post('/api/v2/users', **kwargs)
+        response_code, json_response = self.post('/api/v2/users', **payload)
 
         if response_code == 200:
-            save_user_relation_into_db(username=kwargs['username'], nodebb_uid=json_response['uid'])
+            save_user_relation_into_db(username=payload['username'], nodebb_uid=json_response['uid'])
 
         return response_code, json_response
 
@@ -47,12 +52,12 @@ class NodeBBUser(Client):
         username, email, fullname, website, location, birthday, signature
 
         Args:
-            username (str): The edx username for the user we are deleting
+            username (str): The edX username for the user we are deleting
 
-            **kwargs: A dictionary of user properties we are updating.
+            **kwargs (dictionary): A dictionary of user properties we are updating.
 
         Returns:
-            tuple: Tuple in the form (response_code, json_response)
+            tuple: Tuple in the form (response_code, json_response) received from requests call.
 
         """
         uid = get_nodebb_uid_from_username(username)
@@ -66,10 +71,10 @@ class NodeBBUser(Client):
         then, no requests will be made and a 404 will be returned.
 
         Args:
-            username (str): The edx username for the user we are deleting
+            username (str): The edX username for the user we are deleting.
 
         Returns:
-            tuple: Tuple in the form (response_code, json_response)
+            tuple: Tuple in the form (response_code, json_response) received from requests call.
 
         """
         uid = get_nodebb_uid_from_username(username)

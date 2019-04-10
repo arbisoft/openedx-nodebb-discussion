@@ -9,7 +9,11 @@ from openedx.features.openedx_nodebb_discussion.models import EdxNodeBBUser, Edx
 
 def save_user_relation_into_db(username, nodebb_uid):
     """
-    Saves edx_userid and nodebb_uid in EdxNodeBBUser table.
+    Saves NodeBB uid against edx_userid in EdxNodeBBUser table.
+
+    Args:
+        username (str): edX username of user
+        nodebb_uid (int): NodeBB uid for edX user
     """
     relation = EdxNodeBBUser()
     relation.edx_uid = get_object_or_404(User, username=username)
@@ -19,7 +23,13 @@ def save_user_relation_into_db(username, nodebb_uid):
 
 def get_nodebb_uid_from_username(username):
     """
-    Returns nodebb_uid using edx username.
+    Extract nodebb_uid from table EdxNodeBBUser using username.
+
+    Args:
+        username (str): edX username of user
+
+    Returns:
+        int: returns nodebb_uid get from model
     """
     edx_user = get_object_or_404(User, username=username)
     user_relation = get_object_or_404(EdxNodeBBUser, edx_uid=edx_user)
@@ -28,7 +38,11 @@ def get_nodebb_uid_from_username(username):
 
 def save_category_relation_into_db(course_id, category_id):
     """
-    Saves edx course key and nodebb category id in EdxNodeBBCategory table.
+    Saves NodeBB cid against edx_courseid in EdxNodeBBCategory table.
+
+    Args:
+        course_id: Course Key of course for which category is created.
+        category_id: NodeBB cid for edX course.
     """
     category_relation = EdxNodeBBCategory()
     category_relation.course_key = course_id
@@ -38,7 +52,12 @@ def save_category_relation_into_db(course_id, category_id):
 
 def save_group_relation_into_db(course_id, group_slug, group_name):
     """
-    Saves nodebb group slug against the course it is created.
+    Saves NodeBB group_slug against edx_courseid in EdxNodeBBCategory table.
+
+    Args:
+        course_id: Course Key of course for which category is created.
+        group_slug: NodeBB group_slug for edX course.
+        group_name: NodeBB group_name for edX course.
     """
     group_relation = get_object_or_404(EdxNodeBBCategory, course_key=course_id)
     group_relation.nodebb_group_slug = group_slug
@@ -48,7 +67,13 @@ def save_group_relation_into_db(course_id, group_slug, group_name):
 
 def get_category_id_from_course_id(course_id):
     """
-    Returns category id using edx course id
+    Extract nodebb_cid from table EdxNodeBBCategory using course_id.
+
+    Args:
+        course_id (Course Key): Course Key of edX Course for which cid is require.
+
+    Returns:
+        int: returns nodebb_cid get from model
     """
     category_relation = get_object_or_404(EdxNodeBBCategory, course_key=course_id)
     return category_relation.nodebb_cid
@@ -56,7 +81,13 @@ def get_category_id_from_course_id(course_id):
 
 def get_group_slug_from_course_id(course_id):
     """
-    Returns group slug using edx course id.
+    Extract group_slug from table EdxNodeBBCategory using course_id.
+
+    Args:
+        course_id (Course Key): Course Key of edX Course for which group_slug is require.
+
+    Returns:
+        str: returns nodebb_group_slug get from model
     """
     category_relation = get_object_or_404(EdxNodeBBCategory, course_key=course_id)
     return category_relation.nodebb_group_slug
@@ -64,7 +95,13 @@ def get_group_slug_from_course_id(course_id):
 
 def get_group_slug_from_category_id(category_id):
     """
-    Returns nodebb group slug using nodebb  category id.
+    Extract group_slug from table EdxNodeBBCategory using course_id.
+
+    Args:
+        category_id (int): nodebb_cid for edX Course for which group_slug is require.
+
+    Returns:
+        str: returns nodebb_group_slug get from model
     """
     category_relation = get_object_or_404(EdxNodeBBCategory, nodebb_cid=category_id)
     return category_relation.nodebb_group_slug
@@ -72,7 +109,13 @@ def get_group_slug_from_category_id(category_id):
 
 def get_group_name_from_course_id(course_id):
     """
-    Returns nodebb group name using edx course id.
+    Extract group_name from table EdxNodeBBCategory using course_id.
+
+    Args:
+      course_id (Course Key): Course Key of edX Course for which group_name is require.
+
+    Returns:
+        str: returns nodebb_group_name get from model
     """
     category_relation = get_object_or_404(EdxNodeBBCategory, course_key=course_id)
     return category_relation.nodebb_group_name

@@ -8,6 +8,9 @@ from opaque_keys.edx.django.models import CourseKeyField
 
 
 class EdxNodeBBUser(models.Model):
+    """
+    Stores NodeBB uid against edX User
+    """
     edx_uid = models.OneToOneField(User, on_delete=models.CASCADE)
     nodebb_uid = models.IntegerField(unique=True)
 
@@ -16,6 +19,9 @@ class EdxNodeBBUser(models.Model):
 
 
 class EdxNodeBBCategory(models.Model):
+    """
+    Stores NodeBB cid, group_slug and group_name against edX Courses
+    """
     course_key = CourseKeyField(max_length=255, db_index=True)
     nodebb_cid = models.IntegerField(unique=True)
     nodebb_group_slug = models.CharField(max_length=255, blank=True, null=True)

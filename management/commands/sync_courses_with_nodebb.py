@@ -1,5 +1,5 @@
 """
-Django management command to create categories at nodeBB corresponding to edx-platform courses.
+Django management command to create categories at NodeBB corresponding to edX courses.
 """
 from logging import getLogger
 
@@ -13,9 +13,9 @@ log = getLogger(__name__)
 
 class Command(BaseCommand):
     help = """
-    This command creates categories in nodeBB according to all Courses in edx-platform.
+    This command creates categories in NodeBB corresponding to all Courses in edX.
 
-    example:
+    Example usage:
         manage.py ... sync_courses_with_nodebb
     """
 
@@ -32,6 +32,7 @@ class Command(BaseCommand):
                         edx_course.id.run
                     ),
                 }
-                task_create_category_on_nodebb.delay(course_id=edx_course.id, course_name=edx_course.display_name,
+                task_create_category_on_nodebb.delay(course_id=edx_course.id,
+                                                     course_display_name=edx_course.display_name,
                                                      **course_data)
         log.info('Command has been executed')

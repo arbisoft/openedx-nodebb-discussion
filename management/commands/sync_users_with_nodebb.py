@@ -1,5 +1,5 @@
 """
-Django management command to create users at nodeBB corresponding to edx-platform users.
+Django management command to create users at NodeBB corresponding to edX users.
 """
 from logging import getLogger
 
@@ -16,9 +16,9 @@ log = getLogger(__name__)
 
 class Command(BaseCommand):
     help = """
-    This command creates users in nodeBB according to all User and UserProfile instances in edx-platform.
+    This command creates users in NodeBB according to all User and UserProfile instances in edX.
 
-    example:
+    Example usage:
         manage.py ... sync_users_with_nodebb
     """
 

@@ -1,3 +1,7 @@
+"""
+Contains the MiddleWare Class for NodeBB
+"""
+
 import jwt
 
 from django.conf import settings as django_settings
@@ -18,9 +22,9 @@ class UserSessionSharingMiddleware(object):
                                          django_settings.OPENEDX_NODEBB_DISCUSSION['DISCUSSION_JWT_SECRET'],
                                          algorithm=django_settings.OPENEDX_NODEBB_DISCUSSION[
                                              'DISCUSSION_JWT_ALGORITHM'])
-                response.set_cookie('token', encoded_jwt, domain=django_settings.NODEBB_DOMAIN)
+                response.set_cookie('token', encoded_jwt, domain=django_settings.NODEBB_SETTINGS['DOMAIN'])
             else:
-                response.delete_cookie('token', domain=django_settings.NODEBB_DOMAIN)
+                response.delete_cookie('token', domain=django_settings.NODEBB_SETTINGS['DOMAIN'])
         except AttributeError:
             pass
         return response

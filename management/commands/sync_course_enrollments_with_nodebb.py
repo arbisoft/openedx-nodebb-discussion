@@ -1,5 +1,5 @@
 """
-Django management command to join groups at nodeBB corresponding to edx-platform course enrollments.
+Django management command to join groups at NodeBB corresponding to edX course enrollments.
 """
 from logging import getLogger
 
@@ -13,9 +13,9 @@ log = getLogger(__name__)
 
 class Command(BaseCommand):
     help = """
-    This command enables the edx_user to join nodebb groups
+    This command create user membership in group of NodeBB based on user enrollments in edX courses
 
-    example:
+    Example usage:
         manage.py ... sync_course_enrollments_with_nodebb
     """
 

@@ -1,5 +1,5 @@
 """
-Base class which contains the basic methods to interaction with the write api of nodebb.
+Base class which contains the basic methods to interaction with the write api of NodeBB.
 """
 import json
 
@@ -9,19 +9,32 @@ from django.conf import settings as django_settings
 
 
 class Client(object):
-
+    """
+    Client Class responsible to make connection with NodeBB and perform all calls.
+    """
     def __init__(self):
         self._configure()
 
     def _configure(self):
-        self.endpoint = "http://172.16.16.27:4568"
-        self.admin_uid = "1"
+        self.endpoint = 'http://172.16.16.24:4568'
+        self.admin_uid = django_settings.OPENEDX_NODEBB_DISCUSSION['NODEBB_ADMIN_UID']
         self.headers = {
-            'Authorization': "Bearer {}".format(django_settings.OPENEDX_NODEBB_DISCUSSION['NODEBB_API_TOKEN']),
-            'Content-Type': "application/json"
+            'Authorization': 'Bearer {}'.format(django_settings.OPENEDX_NODEBB_DISCUSSION['NODEBB_API_TOKEN']),
+            'Content-Type': 'application/json'
         }
 
     def _request(self, method, path, **kwargs):
+        """
+        Hidden Method of Client this function will generate all of the Api Call's and return response.
+
+        Args:
+            method (str): Api call method can be Post, Put, and Delete
+            path (str): Api path to make call
+            kwargs (dictionary): All others data to post and put to Api along with call
+
+        Returns:
+            tuple: Tuple in the form (response_code, json_response) received from requests call.
+        """
         if '_uid' not in kwargs:
             kwargs.update({'_uid': self.admin_uid})
 
@@ -50,14 +63,41 @@ class Client(object):
         except ValueError:
             return status_code, {}
 
-    def get(self, path, **kwargs):
-        return self._request('GET', path, **kwargs)
-
     def post(self, path, **kwargs):
+        """
+        Handles all type of post calls made to NodeBB.
+
+        Args:
+            path (str): Api path to make call
+            kwargs (dictionary): All others data to post and put to Api along with call
+
+        Returns:
+            tuple: Tuple in the form (response_code, json_response) received from requests call.
+        """
         return self._request('POST', path, **kwargs)
 
     def put(self, path, **kwargs):
+        """
+        Handles all type of put calls made to NodeBB.
+
+        Args:
+            path (str): Api path to make call
+            kwargs (dictionary): All others data to post and put to Api along with call
+
+        Returns:
+            tuple: Tuple in the form (response_code, json_response) received from requests call.
+        """
         return self._request('PUT', path, **kwargs)
 
     def delete(self, path, **kwargs):
+        """
+        Handles all type of delete calls made to NodeBB.
+
+        Args:
+            path (str): Api path to make call
+            kwargs (dictionary): All others data to post and put to Api along with call
+
+        Returns:
+            tuple: Tuple in the form (response_code, json_response) received from requests call.
+        """
         return self._request('DELETE', path, **kwargs)

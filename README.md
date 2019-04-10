@@ -24,44 +24,47 @@ and set their values to   `true`
 ```
 FEATURES = {
     ...
-    'ENABLE_NODEBB_DISCUSSION': true,
+    "ENABLE_NODEBB_DISCUSSION": true,
 }
 ```
 ---
 
-Add the following key-value pair at the end of `lms.env.json`
+Add the following dictionary at the end of `lms.env.json` and `cms.env.json`
 
 ```
 {
     ...
     ...
-    "NODEBB_URL": "YOUR NODEBB URL",
-    "NODEBB_DOMAIN": "YOUR NODEBB DOMAIN"
+    "NODEBB_SETTINGS": {
+        "URL": "YOUR NODEBB URL",
+        "DOMAIN": "YOUR NODEBB DOMAIN",
+        "TASK_RETRY_DELAY": "Secs in Integer",
+    }
 }
 ```
 ---
-Add the following dictionary at the end of `lms.auth.json`
+Add the following dictionary at the end of `lms.auth.json` and `cms.auth.json`
 
 ```
 {
     ...
     ...
     "OPENEDX_NODEBB_DISCUSSION": {
-        "DISCUSSION_JWT_SECRET": "Your secret",
-        "DISCUSSION_JWT_ALGORITHM": "Your algorithm"
+        "DISCUSSION_JWT_SECRET": "<Your secret>",
+        "DISCUSSION_JWT_ALGORITHM": "<Your algorithm>",
+        "NODEBB_API_TOKEN": "<Your NodeBB Write Api Token>",
+        "NODEBB_ADMIN_UID": "<Your NodeBB Admin Uid Must be a Integer>"
     }
 }
 ```
 ---
 
-Add the following lines in `lms/env/aws.py`
+Add the following lines in `lms/env/aws.py` and `cms/env/aws.py`
 
 ```
 ##################### Openedx Nodebb Discussion Secrets ###########
-OPENEDX_NODEBB_DISCUSSION = AUTH_TOKENS.get('OPENEDX_NODEBB_DISCUSSION', {})
-NODEBB_URL = ENV_TOKENS.get('NODEBB_URL', None)
-NODEBB_DOMAIN = ENV_TOKENS.get('NODEBB_DOMAIN', None)
-
+OPENEDX_NODEBB_DISCUSSION = AUTH_TOKENS.get("OPENEDX_NODEBB_DISCUSSION", {})
+NODEBB_SETTINGS = ENV_TOKENS.get("NODEBB_SETTINGS", None)
 ```
 
 make sure that you put these lines after the following code portion
@@ -79,7 +82,8 @@ with open(CONFIG_ROOT / CONFIG_PREFIX + "auth.json") as auth_file:
 ---
 
 To add `openedx_nodebb_discussion` app into the installed apps add the 
-following line in the `INSTALLED_APPS` list present in `lms/common.py` file.
+following line in the `INSTALLED_APPS` list present in `lms/common.py` and 
+`cms/common.py` file.
 
 ```
 INSTALLED_APPS = [
@@ -108,7 +112,7 @@ if settings.FEATURES.get('ENABLE_NODEBB_DISCUSSION'):
 
 ---
 
-Add a entery point for our discussion tab in the following file
+Add a entry point for our discussion tab in the following file
 `../edx-platfrom/setup.py`
 
 ```
@@ -122,8 +126,7 @@ entry_points={
 
 ---
 
-After that change the `version number` which is availabe in the same file for example if it is `0.11` change it to `0.12` and then go to `lms-shell` and your directory path should 
- be like this
+After that change the `version number` which is available in the same file for example if it is `0.11` change it to `0.12` and then go to `lms-shell` and your directory path should be like this
 
 `/edx/app/edxapp/edx-platform#`
 
@@ -137,9 +140,9 @@ Here, run the following command
 
 Go to studio using the following url `localhost:18010` 
     
-   and add the following line `"openedx_nodebb_discussion"`
-   in the advacned module list of the course in which you want to show `openedx_nodebb_discussion` tab.
+   Add the following line `"openedx_nodebb_discussion"`
+   in the `Advanced Module List` of the course in which you want to show `openedx_nodebb_discussion` tab.
 
 
 
- **Note:`advanced_module_list` is availabe in the `Advanced Settings` of course**
+ **Note:`Advanced Module List` is available in the `Advanced Settings` of course**

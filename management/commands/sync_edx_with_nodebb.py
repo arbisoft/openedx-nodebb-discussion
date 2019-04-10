@@ -1,15 +1,15 @@
 """
-Django management command to sync edx with nodebb.
+Django management command to sync edX with NodeBB.
 """
-from django.core.management.base import BaseCommand
 from django.core.management import call_command
+from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
     help = """
-    This command syncs the edx with nodebb using the other custom commands.
+    This command syncs the edX with NodeBB using the other custom commands.
 
-    example:
+    Example usage:
         manage.py ... sync_edx_with_nodebb
     """
 

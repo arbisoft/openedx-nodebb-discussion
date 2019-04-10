@@ -1,8 +1,8 @@
 """
-Contains signals, responsible to sync openedx with nodebb.
-As some related event is occured in openedx the signal is received 
-and a relevant request is made to nodebb write api to make that 
-change at nodebb side too.
+Contains signals, responsible to sync edX with NodeBB.
+As some related event is occurred in edX the signal is received
+and a relevant request is made to NodeBB write api to make that
+change at NodeBB side too.
 """
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save, pre_delete
@@ -10,7 +10,6 @@ from django.dispatch import receiver
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
 from openedx.features.openedx_nodebb_discussion.client.tasks import (
     task_create_user_on_nodebb, task_sync_user_profile_info_with_nodebb,
-    task_delete_user_from_nodebb, task_create_category_on_nodebb,
     task_delete_category_from_nodebb, task_delete_user_from_nodebb,
     task_create_category_on_nodebb, task_join_group_on_nodebb,
     task_unjoin_group_on_nodebb
@@ -22,14 +21,21 @@ from student.models import UserProfile, CourseEnrollment
 @receiver(post_save, sender=User)
 def create_and_update_user_on_nodebb(sender, instance, created, update_fields, **kwargs):
     """
-    Creates a new user at nodebb side when a new user is created at open edx side. OR
-    Update the previous one if some relevant updaation occurs.
+    Creates a new user at Nodebb side when a new user is created at edX side. OR
+    Update the previous one if some relevant changes occurs.
+
+    Args:
+        sender (str): Name of Sender model
+        instance: Newly created entry of Model.
+        created: Flag will be true if new instance created or false if upgraded.
+        update_fields:  Contain frozen_set of the name of fields updated.
+        **kwargs:  All remaining fields.
     """
     if created:
         user_data = {
             'username': instance.username,
             'email': instance.email,
-            'joindate': instance.date_joined.strftime("%s")
+            'joindate': instance.date_joined.strftime('%s')
         }
         task_create_user_on_nodebb.delay(**user_data)
     elif update_fields and 'last_login' not in update_fields:
@@ -47,7 +53,12 @@ def create_and_update_user_on_nodebb(sender, instance, created, update_fields, *
 def sync_user_profile_info_with_nodebb(sender, instance, **kwargs):
     """
     If some changed occurs in the User Profile, makes sure that
-    these changes are also made at nodebb side.
+    these changes are also made at Nodebb side.
+
+    Args:
+        sender (str): Name of Sender model
+        instance: Newly created entry of Model.
+        **kwargs:  All remaining fields.
     """
     user = instance.user
     user_data = {
@@ -62,7 +73,12 @@ def sync_user_profile_info_with_nodebb(sender, instance, **kwargs):
 @receiver(pre_delete, sender=User)
 def delete_user_from_nodebb(sender, instance, **kwargs):
     """
-    Deletes the user from nodebb if it is deleted from openedx.
+    Deletes the user from NodeBB if it is deleted from edX.
+
+    Args:
+        sender (str): Name of Sender model
+        instance: Newly created entry of Model.
+        **kwargs:  All remaining fields.
     """
     task_delete_user_from_nodebb.delay(username=instance.username)
 
@@ -70,17 +86,33 @@ def delete_user_from_nodebb(sender, instance, **kwargs):
 @receiver(post_save, sender=CourseOverview)
 def create_category_on_nodebb(sender, instance, created, update_fields, **kwargs):
     """
-    Whenever a new course is created in openedx, creates a new category in nodebb.
+    Whenever a new course is created in edX, creates a new category in NodeBB.
+
+    Args:
+        sender (str): Name of Sender model
+        instance: Newly created entry of Model.
+        created: Flag will be true if new instance created or false if upgraded.
+        update_fields:  Contain frozen_set of the name of fields updated.
+        **kwargs:  All remaining fields.
     """
     if created:
         course_data = {
             'name': '{}-{}-{}-{}'.format(instance.display_name, instance.id.org, instance.id.course, instance.id.run),
         }
-        task_create_category_on_nodebb.delay(course_id=instance.id, course_name=instance.display_name, **course_data)
+        task_create_category_on_nodebb.delay(course_id=instance.id, course_display_name=instance.display_name,
+                                             **course_data)
 
 
 @receiver(pre_delete, sender=EdxNodeBBCategory)
 def delete_category_from_nodebb(sender, instance, **kwargs):
+    """
+    Deletes the category from NodeBB if it is deleted from edX.
+
+    Args:
+        sender (str): Name of Sender model
+        instance: Newly created entry of Model.
+        **kwargs:  All remaining fields.
+    """
     category_id = instance.nodebb_cid
     task_delete_category_from_nodebb.delay(category_id)
 
@@ -88,8 +120,13 @@ def delete_category_from_nodebb(sender, instance, **kwargs):
 @receiver(post_save, sender=CourseEnrollment)
 def manage_membership_on_nodebb_group(sender, instance, **kwargs):
     """
-    Whenever a user is enrolled in a course, adds that member to the group that is correspoding to 
-    that course on nodebb side.
+    Whenever a user is enrolled in a course, adds that member to the group that is corresponding to
+    that course on NodeBBB side.
+
+    Args:
+        sender (str): Name of Sender model
+        instance: Newly created entry of Model.
+        **kwargs:  All remaining fields.
     """
     if instance.is_active:
         task_join_group_on_nodebb.delay(instance.username, instance.course_id)
