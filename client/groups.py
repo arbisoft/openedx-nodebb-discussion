@@ -35,7 +35,7 @@ class NodeBBGroup(Client):
             tuple: Tuple in the form (response_code, json_response) received from requests call.
         """
         response_code, json_response = self.post('/api/v2/groups', **payload)
-        
+
         if response_code == 200:
             save_group_relation_into_db(course_id, group_slug=json_response['slug'], group_name=json_response['name'])
 

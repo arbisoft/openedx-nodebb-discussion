@@ -201,8 +201,8 @@ def save_course_enrollment_in_db(edx_user, course_id):
 
 
 def remove_course_enrollment_from_db(edx_user, course_id):
-    """"
-    Dellets course enrollment details from EdxNodeBBEnrollment table.
+    """
+    Deletes course enrollment details from EdxNodeBBEnrollment table.
 
     
     Args:

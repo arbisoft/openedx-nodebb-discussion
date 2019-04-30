@@ -22,17 +22,14 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         edx_courses = CourseOverview.objects.all()
         nodebb_categories = EdxNodeBBCategory.objects.all()
-
         for edx_course in edx_courses:
             category_relation = nodebb_categories.filter(course_key=edx_course.id)
             if not category_relation:
                 course_data = {
-                    'name': '{}-{}-{}-{}'.format(
-                        edx_course.display_name, edx_course.id.org, edx_course.id.course,
-                        edx_course.id.run
-                    ),
+                    'organization': edx_course.id.org,
+                    'course_name': edx_course.id.course,
+                    'course_run': edx_course.id.run,
+                    'display_name': edx_course.display_name
                 }
-                task_create_category_on_nodebb.delay(course_id=edx_course.id,
-                                                     course_display_name=edx_course.display_name,
-                                                     **course_data)
+                task_create_category_on_nodebb.delay(course_display_name=edx_course.display_name, **course_data)
         log.info('Command has been executed')
