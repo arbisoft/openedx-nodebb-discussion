@@ -28,6 +28,11 @@ class Command(BaseCommand):
                 edx_user = User.objects.filter(username=enrollment.username).first()
                 enrollment_relation = EdxNodeBBEnrollment.objects.filter(edx_uid=edx_user, course_key=enrollment.course_id)
                 if not enrollment_relation:
-                    task_join_group_on_nodebb.delay(enrollment.username, enrollment.course_id)
+                    course_data = {
+                        'organization': enrollment.course_id.org,
+                        'course_name': enrollment.course_id.course,
+                        'course_run': enrollment.course_id.run,
+                    }
+                    task_join_group_on_nodebb.delay(enrollment.username, **course_data)
 
         log.info('Command has been executed.')

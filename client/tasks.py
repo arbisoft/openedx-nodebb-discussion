@@ -5,10 +5,10 @@ from logging import getLogger
 
 from celery.task import task
 from django.conf import settings
-from django.conf import settings as django_settings
 from openedx.features.openedx_nodebb_discussion.client.categories import NodeBBCategory
 from openedx.features.openedx_nodebb_discussion.client.groups import NodeBBGroup
 from openedx.features.openedx_nodebb_discussion.client.users import NodeBBUser
+from opaque_keys.edx.locator import CourseLocator
 from openedx.features.openedx_nodebb_discussion.client.utils import (
     get_category_id_from_course_id, get_group_slug_from_course_id,
     get_group_slug_from_category_id, get_group_name_from_course_id,
@@ -65,12 +65,12 @@ def task_create_user_on_nodebb(**user_data):
     status_code, response = NodeBBUser().create(**user_data)
 
     response_details = {
-        "caller": task_create_user_on_nodebb,
-        "task_name": "User Creation",
-        "job_type": "User",
-        "status_code": status_code,
-        "response": response,
-        "entity": user_data['username']
+        'caller': task_create_user_on_nodebb,
+        'task_name': "User Creation",
+        'job_type': "User",
+        'status_code': status_code,
+        'response': response,
+        'entity': user_data['username']
     }
 
     handle_response(response_details)
@@ -88,12 +88,12 @@ def task_update_user_profile_on_nodebb(username, **user_data):
     status_code, response = NodeBBUser().update(username=username, **user_data)
 
     response_details = {
-        "caller": task_update_user_profile_on_nodebb,
-        "task_name": "User Updating",
-        "job_type": "User",
-        "status_code": status_code,
-        "response": response,
-        "entity": username
+        'caller': task_update_user_profile_on_nodebb,
+        'task_name': "User Updating",
+        'job_type': "User",
+        'status_code': status_code,
+        'response': response,
+        'entity': username
     }
 
     handle_response(response_details)
@@ -110,120 +110,125 @@ def task_delete_user_from_nodebb(username):
     status_code, response = NodeBBUser().delete_user(username=username)
 
     response_details = {
-        "caller": task_delete_user_from_nodebb,
-        "task_name": "User Deletion",
-        "job_type": "User",
-        "status_code": status_code,
-        "response": response,
-        "entity": username
+        'caller': task_delete_user_from_nodebb,
+        'task_name': "User Deletion",
+        'job_type': "User",
+        'status_code': status_code,
+        'response': response,
+        'entity': username
     }
 
     handle_response(response_details)
 
 
 @task(default_retry_delay=RETRY_DELAY, max_retries=None)
-def task_create_category_on_nodebb(course_id, course_display_name, **course_data):
+def task_create_category_on_nodebb(**course_data):
     """
     Creates a category corresponding to an edX course.
     After successful creation of category also creates a
     group against that category on NodeBB.
 
     Args:
-        course_id (CourseKey): Id of course for which we have to create category.
-        course_display_name (str): Display name of course for which we have to create category.
         **course_data (dictionary): Extra data related to course like course full name.
     """
     payload = {
-        "name": course_display_name
+        'name': course_data['display_name']
     }
+
+    course_id = CourseLocator(course_data['organization'], course_data['course_name'], course_data['course_run'])
     status_code, response = NodeBBCategory().create(course_id, **payload)
 
     response_details = {
-        "caller": task_create_category_on_nodebb,
-        "task_name": "Category Creation",
-        "job_type": "Course",
-        "status_code": status_code,
-        "response": response,
-        "entity": course_display_name
+        'caller': task_create_category_on_nodebb,
+        'task_name': "Category Creation",
+        'job_type': "Course",
+        'status_code': status_code,
+        'response': response,
+        'entity': course_data['display_name']
     }
 
     handle_response(response_details)
-
     if status_code == 200:
-        _task_create_group_on_nodebb.delay(course_id, **course_data)
+        _task_create_group_on_nodebb.delay(**course_data)
 
 
 @task(default_retry_delay=RETRY_DELAY, max_retries=None)
-def _task_create_group_on_nodebb(course_id, **group_data):
+def _task_create_group_on_nodebb(**group_data):
     """
     Creates a group on NodeBB.
 
     Args:
-        course_id (CourseKey): Id of course for which we have to create category.
-        **group_data (dictionary): Extra data related to course like course full name.
+        **group_data (dictionary): Extra data related to group like course full name.
     """
-    status_code, response = NodeBBGroup().create(course_id, **group_data)
+    course_id = CourseLocator(group_data['organization'], group_data['course_name'], group_data['course_run'])
+    payload = {
+        'name': '{}-{}-{}-{}'.format(group_data['display_name'], group_data['organization'],
+                                     group_data['course_name'], group_data['course_run'])
+    }
+    status_code, response = NodeBBGroup().create(course_id, **payload)
 
     response_details = {
-        "caller": _task_create_group_on_nodebb,
-        "task_name": "Group Creation",
-        "job_type": "Group",
-        "status_code": status_code,
-        "response": response,
-        "entity": group_data['name']
+        'caller': _task_create_group_on_nodebb,
+        'task_name': "Group Creation",
+        'job_type': "Group",
+        'status_code': status_code,
+        'response': response,
+        'entity': group_data['display_name']
     }
 
     handle_response(response_details)
 
     if status_code == 200:
-        _task_delete_default_permission_of_category_on_nodebb.delay(course_id)
+        _task_delete_default_permission_of_category_on_nodebb.delay(**group_data)
 
 
 @task(default_retry_delay=RETRY_DELAY, max_retries=None)
-def _task_delete_default_permission_of_category_on_nodebb(course_id):
+def _task_delete_default_permission_of_category_on_nodebb(**group_data):
     """
     Deletes default privileges of category on NodeBB.
 
     Args:
-        course_id (CourseKey): Id of course for extracting its related category_id.
+        **group_data (dictionary): Extra data related to group like course full name.
     """
+    course_id = CourseLocator(group_data['organization'], group_data['course_name'], group_data['course_run'])
     category_id = get_category_id_from_course_id(course_id)
     status_code, response = NodeBBCategory().delete_default_permissions(category_id)
 
     response_details = {
-        "caller": _task_delete_default_permission_of_category_on_nodebb,
-        "task_name": "Default Permission Deletion",
-        "job_type": "Group",
-        "status_code": status_code,
-        "response": response,
-        "entity": str(course_id)
+        'caller': _task_delete_default_permission_of_category_on_nodebb,
+        'task_name': "Default Permission Deletion",
+        'job_type': "Group",
+        'status_code': status_code,
+        'response': response,
+        'entity': str(course_id)
     }
 
     handle_response(response_details)
 
     if status_code == 200:
-        _task_add_course_group_permission_of_category_on_nodebb.delay(course_id)
+        _task_add_course_group_permission_of_category_on_nodebb.delay(**group_data)
 
 
 @task(default_retry_delay=RETRY_DELAY, max_retries=None)
-def _task_add_course_group_permission_of_category_on_nodebb(course_id):
+def _task_add_course_group_permission_of_category_on_nodebb(**group_data):
     """
     Add custom group permission of category on NodeBB.
 
     Args:
-        course_id (CourseKey): Id of course for extracting its related category_id.
+        **group_data (dictionary): Extra data related to group like course full name.
     """
+    course_id = CourseLocator(group_data['organization'], group_data['course_name'], group_data['course_run'])
     group_name = get_group_name_from_course_id(course_id)
     category_id = get_category_id_from_course_id(course_id)
     status_code, response = NodeBBCategory().add_course_group_permission(category_id, group_name)
 
     response_details = {
-        "caller": _task_add_course_group_permission_of_category_on_nodebb,
-        "task_name": "Adding Category Group Permission",
-        "job_type": "Group",
-        "status_code": status_code,
-        "response": response,
-        "entity": str(course_id)
+        'caller': _task_add_course_group_permission_of_category_on_nodebb,
+        'task_name': "Adding Category Group Permission",
+        'job_type': "Group",
+        'status_code': status_code,
+        'response': response,
+        'entity': str(course_id)
     }
 
     handle_response(response_details)
@@ -240,12 +245,12 @@ def task_delete_category_from_nodebb(category_id):
     status_code, response = NodeBBCategory().delete_category(category_id)
 
     response_details = {
-        "caller": task_delete_category_from_nodebb,
-        "task_name": "Category Deletion",
-        "job_type": "Category",
-        "status_code": status_code,
-        "response": response,
-        "entity": category_id
+        'caller': task_delete_category_from_nodebb,
+        'task_name': "Category Deletion",
+        'job_type': "Category",
+        'status_code': status_code,
+        'response': response,
+        'entity': category_id
     }
 
     handle_response(response_details)
@@ -266,62 +271,64 @@ def _task_delete_group_from_nodebb(category_id):
     status_code, response = NodeBBGroup().delete_group(group_slug)
 
     response_details = {
-        "caller": _task_delete_group_from_nodebb,
-        "task_name": "Group Deletion",
-        "job_type": "Group",
-        "status_code": status_code,
-        "response": response,
-        "entity": group_slug
+        'caller': _task_delete_group_from_nodebb,
+        'task_name': "Group Deletion",
+        'job_type': "Group",
+        'status_code': status_code,
+        'response': response,
+        'entity': group_slug
     }
 
     handle_response(response_details)
 
 
 @task(default_retry_delay=RETRY_DELAY, max_retries=None)
-def task_join_group_on_nodebb(username, course_id):
+def task_join_group_on_nodebb(username, **group_data):
     """
     Register the user in NodeBB group.
 
     Args:
         username (str): Username of edX User who is joining group.
-        course_id (CourseKey): Id of course for extracting its related group_slug.
+        **group_data (dictionary): Extra data related to group like course full name.
     """
+    course_id = CourseLocator(group_data['organization'], group_data['course_name'], group_data['course_run'])
     group_slug = get_group_slug_from_course_id(course_id)
     uid = get_nodebb_uid_from_username(username)
     status_code, response = NodeBBGroup().add_member(uid, group_slug)
 
     response_details = {
-        "caller": task_join_group_on_nodebb,
-        "task_name": "Group Membership",
-        "job_type": "Join Group",
-        "status_code": status_code,
-        "response": response,
-        "entity": username
+        'caller': task_join_group_on_nodebb,
+        'task_name': "Group Membership",
+        'job_type': "Join Group",
+        'status_code': status_code,
+        'response': response,
+        'entity': username
     }
 
     handle_response(response_details)
 
 
 @task(default_retry_delay=RETRY_DELAY, max_retries=None)
-def task_unjoin_group_on_nodebb(username, course_id):
+def task_unjoin_group_on_nodebb(username, **group_data):
     """
     Unregister the user from NodeBB group.
 
     Args:
         username (str): Username of edX User who is leaving the group.
-        course_id (CourseKey): Id of course for extracting its related group_slug.
+        **group_data (dictionary): Extra data related to group like course full name.
     """
+    course_id = CourseLocator(group_data['organization'], group_data['course_name'], group_data['course_run'])
     group_slug = get_group_slug_from_course_id(course_id)
     uid = get_nodebb_uid_from_username(username)
     status_code, response = NodeBBGroup().remove_member(uid, group_slug)
 
     response_details = {
-        "caller": task_unjoin_group_on_nodebb,
-        "task_name": "Group Membership",
-        "job_type": "Un join Group",
-        "status_code": status_code,
-        "response": response,
-        "entity": username
+        'caller': task_unjoin_group_on_nodebb,
+        'task_name': "Group Membership",
+        'job_type': "Un join Group",
+        'status_code': status_code,
+        'response': response,
+        'entity': username
     }
 
     handle_response(response_details)
