@@ -29,3 +29,14 @@ class EdxNodeBBCategory(models.Model):
 
     def __str__(self):
         return str(self.course_key)
+
+
+class EdxNodeBBEnrollment(models.Model):
+    """
+    Stores Edx Course Id and Edx User Id to keep record of Edx Enrollments.
+    """
+    course_key = CourseKeyField(max_length=255, db_index=True)
+    edx_uid = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '{}-{}'.format(self.edx_uid.username, str(self.course_key))
