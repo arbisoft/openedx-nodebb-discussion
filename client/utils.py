@@ -3,7 +3,9 @@ Contains some common functions of the related app
 to store and retrieve data from database.
 """
 from django.contrib.auth.models import User
-from openedx.features.openedx_nodebb_discussion.models import EdxNodeBBUser, EdxNodeBBCategory
+from openedx.features.openedx_nodebb_discussion.models import (
+    EdxNodeBBUser, EdxNodeBBCategory, EdxNodeBBEnrollment,
+)
 
 
 def save_user_relation_into_db(username, nodebb_uid):
@@ -64,6 +66,7 @@ def save_group_relation_into_db(course_id, group_slug, group_name):
         group_slug (str): NodeBB group_slug for edX course.
         group_name (str): NodeBB group_name for edX course.
     """
+    
     group_relation = EdxNodeBBCategory.objects.filter(course_key=course_id).first()
 
     if group_relation:
@@ -142,3 +145,71 @@ def get_group_name_from_course_id(course_id):
         return category_relation.nodebb_group_name
 
     return None
+
+
+def get_course_id_from_group_slug(group_slug):
+    """
+    Extracts course id from table EdxNodeBBCategory using group_slug.
+
+    Args:
+        group_slug (str): NodeBB group_slug for edX course.
+
+    Returns:
+        CourseKey: returns course_id stored in the model corresponding to group_slug        
+    """
+    category_relation = EdxNodeBBCategory.objects.filter(nodebb_group_slug=group_slug).first()
+
+    if category_relation:
+        return category_relation.course_key
+    
+    return None
+
+
+def get_edx_user_from_nodebb_uid(nodebb_uid):
+    """
+    Extracts edx user from table EdxNodeBBUser using nodebb_uid.
+
+    Args:
+        nodebb_uid (int): NodeBB uid for edx user.
+
+    Returns:
+        User: returns edx user storted in the model corresponding to nodebb_uid.
+    """
+    user_relation = EdxNodeBBUser.objects.filter(nodebb_uid=nodebb_uid).first()
+
+    if user_relation:
+        return user_relation.edx_uid
+
+    return None    
+
+
+def save_course_enrollment_in_db(edx_user, course_id):
+    """
+    Saves edx_user and course_id in EdxNodeBBEnrollment table.
+
+    Args:
+        edx_user (User): Edx User to save course enrollment.
+        course_id (Course Key): Edx Course Key to save course enrollment.    
+    """
+    course_enrollment = EdxNodeBBEnrollment.objects.filter(edx_uid=edx_user, course_key=course_id)
+
+    if not course_enrollment:
+        enrollment = EdxNodeBBEnrollment()
+        enrollment.edx_uid = edx_user
+        enrollment.course_key = course_id
+        enrollment.save()
+
+
+def remove_course_enrollment_from_db(edx_user, course_id):
+    """
+    Deletes course enrollment details from EdxNodeBBEnrollment table.
+
+    
+    Args:
+        edx_user (User): Edx User to delete course enrollment.
+        course_id (Course Key): Edx Course Key to delete course enrollment.    
+    """
+    course_enrollment = EdxNodeBBEnrollment.objects.filter(edx_uid=edx_user, course_key=course_id)
+
+    if course_enrollment:
+        course_enrollment.delete()

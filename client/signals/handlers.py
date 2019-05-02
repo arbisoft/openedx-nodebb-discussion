@@ -97,10 +97,12 @@ def create_category_on_nodebb(sender, instance, created, update_fields, **kwargs
     """
     if created:
         course_data = {
-            'name': '{}-{}-{}-{}'.format(instance.display_name, instance.id.org, instance.id.course, instance.id.run),
+            'organization': instance.id.org,
+            'course_name': instance.id.course,
+            'course_run': instance.id.run,
+            'display_name': instance.display_name
         }
-        task_create_category_on_nodebb.delay(course_id=instance.id, course_display_name=instance.display_name,
-                                             **course_data)
+        task_create_category_on_nodebb.delay(**course_data)
 
 
 @receiver(pre_delete, sender=EdxNodeBBCategory)
@@ -127,7 +129,12 @@ def manage_membership_on_nodebb_group(sender, instance, **kwargs):
         instance: Newly created or updated entry of Model.
         **kwargs:  All remaining fields.
     """
+    course_data = {
+        'organization': instance.course_id.org,
+        'course_name': instance.course_id.course,
+        'course_run': instance.course_id.run,
+    }
     if instance.is_active:
-        task_join_group_on_nodebb.delay(instance.username, instance.course_id)
+        task_join_group_on_nodebb.delay(instance.username, **course_data)
     elif not instance.is_active and not kwargs['created']:
-        task_unjoin_group_on_nodebb.delay(instance.username, instance.course_id)
+        task_unjoin_group_on_nodebb.delay(instance.username, **course_data)
