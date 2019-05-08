@@ -5,9 +5,10 @@ Contains the User Class for NodeBB Client
 """
 from __future__ import unicode_literals
 
-from openedx.features.openedx_nodebb_discussion.client import Client
-from openedx.features.openedx_nodebb_discussion.client.utils import (
-    save_user_relation_into_db, get_nodebb_uid_from_username
+from openedx.features.openedx_edly_discussion.client import Client
+from openedx.features.openedx_edly_discussion.client.utils import (
+    get_nodebb_uid_from_username,
+    save_user_relation_into_db
 )
 
 
@@ -35,7 +36,6 @@ class NodeBBUser(Client):
 
         """
         response_code, json_response = self.post('/api/v2/users', **payload)
-
         if response_code == 200:
             save_user_relation_into_db(username=payload['username'], nodebb_uid=json_response['uid'])
 

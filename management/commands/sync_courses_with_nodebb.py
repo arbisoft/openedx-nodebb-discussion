@@ -5,8 +5,8 @@ from logging import getLogger
 
 from django.core.management.base import BaseCommand
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
-from openedx.features.openedx_nodebb_discussion.client.tasks import task_create_category_on_nodebb
-from openedx.features.openedx_nodebb_discussion.models import EdxNodeBBCategory
+from openedx.features.openedx_edly_discussion.client.tasks import task_create_category_on_nodebb
+from openedx.features.openedx_edly_discussion.models import EdxNodeBBCategory
 
 log = getLogger(__name__)
 

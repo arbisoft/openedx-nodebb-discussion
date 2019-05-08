@@ -8,14 +8,17 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
-from openedx.features.openedx_nodebb_discussion.client.tasks import (
-    task_create_user_on_nodebb, task_update_user_profile_on_nodebb,
-    task_delete_category_from_nodebb, task_delete_user_from_nodebb,
-    task_create_category_on_nodebb, task_join_group_on_nodebb,
-    task_unjoin_group_on_nodebb
+from openedx.features.openedx_edly_discussion.client.tasks import (
+    task_create_category_on_nodebb,
+    task_create_user_on_nodebb,
+    task_delete_category_from_nodebb,
+    task_delete_user_from_nodebb,
+    task_join_group_on_nodebb,
+    task_unjoin_group_on_nodebb,
+    task_update_user_profile_on_nodebb
 )
-from openedx.features.openedx_nodebb_discussion.models import EdxNodeBBCategory
-from student.models import UserProfile, CourseEnrollment
+from openedx.features.openedx_edly_discussion.models import EdxNodeBBCategory
+from student.models import CourseEnrollment, UserProfile
 
 
 @receiver(post_save, sender=User)

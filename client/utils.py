@@ -3,9 +3,7 @@ Contains some common functions of the related app
 to store and retrieve data from database.
 """
 from django.contrib.auth.models import User
-from openedx.features.openedx_nodebb_discussion.models import (
-    EdxNodeBBUser, EdxNodeBBCategory, EdxNodeBBEnrollment,
-)
+from openedx.features.openedx_edly_discussion.models import EdxNodeBBCategory, EdxNodeBBEnrollment, EdxNodeBBUser
 
 
 def save_user_relation_into_db(username, nodebb_uid):
@@ -66,13 +64,31 @@ def save_group_relation_into_db(course_id, group_slug, group_name):
         group_slug (str): NodeBB group_slug for edX course.
         group_name (str): NodeBB group_name for edX course.
     """
-    
+
     group_relation = EdxNodeBBCategory.objects.filter(course_key=course_id).first()
 
     if group_relation:
         group_relation.nodebb_group_slug = group_slug
         group_relation.nodebb_group_name = group_name
         group_relation.save()
+
+
+def get_nodebb_category_relation_from_course_id(course_id):
+    """
+    Extracts nodebb_category_relation object from table EdxNodeBBCategory using course_id.
+
+    Args:
+        course_id (CourseKey): Id of edX Course for which cid is required.
+
+    Returns:
+        EdxNodeBBCategory (Model Object): returns object of EdxNodeBBCategory.
+    """
+    category_relation = EdxNodeBBCategory.objects.filter(course_key=course_id).first()
+
+    if category_relation:
+        return category_relation
+
+    return None
 
 
 def get_category_id_from_course_id(course_id):
@@ -155,13 +171,13 @@ def get_course_id_from_group_slug(group_slug):
         group_slug (str): NodeBB group_slug for edX course.
 
     Returns:
-        CourseKey: returns course_id stored in the model corresponding to group_slug        
+        CourseKey: returns course_id stored in the model corresponding to group_slug
     """
     category_relation = EdxNodeBBCategory.objects.filter(nodebb_group_slug=group_slug).first()
 
     if category_relation:
         return category_relation.course_key
-    
+
     return None
 
 
@@ -180,36 +196,40 @@ def get_edx_user_from_nodebb_uid(nodebb_uid):
     if user_relation:
         return user_relation.edx_uid
 
-    return None    
+    return None
 
 
-def save_course_enrollment_in_db(edx_user, course_id):
+def save_course_enrollment_in_db(edx_user, course_id, nodebb_cid):
     """
     Saves edx_user and course_id in EdxNodeBBEnrollment table.
 
     Args:
         edx_user (User): Edx User to save course enrollment.
-        course_id (Course Key): Edx Course Key to save course enrollment.    
+        course_id (Course Key): Edx Course Key to save course enrollment.
+        nodebb_cid (EdxNodeBBCategory): EdxNodeBBCategory Object.
     """
-    course_enrollment = EdxNodeBBEnrollment.objects.filter(edx_uid=edx_user, course_key=course_id)
+    course_enrollment = EdxNodeBBEnrollment.objects.filter(edx_uid=edx_user, course_key=course_id,
+                                                           nodebb_cid=nodebb_cid)
 
     if not course_enrollment:
         enrollment = EdxNodeBBEnrollment()
         enrollment.edx_uid = edx_user
         enrollment.course_key = course_id
+        enrollment.nodebb_cid = nodebb_cid
         enrollment.save()
 
 
-def remove_course_enrollment_from_db(edx_user, course_id):
+def remove_course_enrollment_from_db(edx_user, course_id, nodebb_cid):
     """
     Deletes course enrollment details from EdxNodeBBEnrollment table.
 
-    
     Args:
         edx_user (User): Edx User to delete course enrollment.
-        course_id (Course Key): Edx Course Key to delete course enrollment.    
+        course_id (Course Key): Edx Course Key to delete course enrollment.
+        nodebb_cid (EdxNodeBBCategory): EdxNodeBBCategory Object.
     """
-    course_enrollment = EdxNodeBBEnrollment.objects.filter(edx_uid=edx_user, course_key=course_id)
+    course_enrollment = EdxNodeBBEnrollment.objects.filter(edx_uid=edx_user, course_key=course_id,
+                                                           nodebb_cid=nodebb_cid)
 
     if course_enrollment:
         course_enrollment.delete()

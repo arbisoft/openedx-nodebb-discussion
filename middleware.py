@@ -1,16 +1,15 @@
 """
-Contains the MiddleWare Class for NodeBB
+Contains the MiddleWare Class for Edly Discussion
 """
 
 import jwt
-
 from django.conf import settings as django_settings
 
 
 class UserSessionSharingMiddleware(object):
     """
     Middleware to set jwt login token on sign in
-    Used for session sharing with NodeBB community
+    Used for session sharing with Edly Discussion
     """
 
     def process_response(self, request, response):
@@ -21,13 +20,13 @@ class UserSessionSharingMiddleware(object):
                     'username': request.user.username,
                     'email': request.user.email
                 }
-                jwt_secret = django_settings.OPENEDX_NODEBB_DISCUSSION['DISCUSSION_JWT_SECRET']
-                jwt_algorithm = django_settings.OPENEDX_NODEBB_DISCUSSION['DISCUSSION_JWT_ALGORITHM']
+                jwt_secret = django_settings.EDLY_DISCUSSION_SECRETS['DISCUSSION_JWT_SECRET']
+                jwt_algorithm = django_settings.EDLY_DISCUSSION_SECRETS['DISCUSSION_JWT_ALGORITHM']
 
                 encoded_jwt = jwt.encode(user_data, jwt_secret, jwt_algorithm)
-                response.set_cookie('token', encoded_jwt, domain=django_settings.NODEBB_SETTINGS['DOMAIN'])
+                response.set_cookie('token', encoded_jwt, domain=django_settings.EDLY_DISCUSSION_SETTINGS['DOMAIN'])
             else:
-                response.delete_cookie('token', domain=django_settings.NODEBB_SETTINGS['DOMAIN'])
+                response.delete_cookie('token', domain=django_settings.EDLY_DISCUSSION_SETTINGS['DOMAIN'])
         except AttributeError:
             pass
         return response

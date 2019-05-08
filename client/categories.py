@@ -4,32 +4,9 @@
 Contains the Category Class for NodeBB Client
 """
 
-from openedx.features.openedx_nodebb_discussion.client import Client
-from openedx.features.openedx_nodebb_discussion.client.utils import save_category_relation_into_db
-
-DEFAULT_PRIVILEGES = [
-    'groups:find',
-    'groups:read',
-    'groups:topics:read',
-    'groups:topics:create',
-    'groups:topics:reply',
-    'groups:topics:tag',
-    'groups:posts:edit',
-    'groups:posts:history',
-    'groups:posts:delete',
-    'groups:posts:upvote',
-    'groups:posts:downvote',
-    'groups:topics:delete',
-    'groups:posts:view_deleted',
-    'groups:purge',
-    'groups:moderate'
-]
-
-DEFAULT_GROUPS = [
-    'registered-users',
-    'guests',
-    'spiders'
-]
+from openedx.features.openedx_edly_discussion.client import Client
+from openedx.features.openedx_edly_discussion.client.constants import DEFAULT_GROUPS, DEFAULT_PRIVILEGES
+from openedx.features.openedx_edly_discussion.client.utils import save_category_relation_into_db
 
 
 class NodeBBCategory(Client):
@@ -42,7 +19,7 @@ class NodeBBCategory(Client):
         Creates a new NodeBB Category.
 
         Args:
-            course_id (CourseKey) : Id of course for which we have to create group.
+            course_id (CourseKey) : Id of course for which we have to create category.
 
             **payload (dictionary): All other params to pass for category creation, like category_name, type.
             payload: {
