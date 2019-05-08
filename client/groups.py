@@ -92,5 +92,5 @@ class NodeBBGroup(Client):
             course_id = get_course_id_from_group_slug(group_slug)
             edx_user = get_edx_user_from_nodebb_uid(uid)
             remove_course_enrollment_from_db(edx_user, course_id)
-        
+
         return response_code, json_response

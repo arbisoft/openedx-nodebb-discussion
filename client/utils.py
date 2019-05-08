@@ -66,7 +66,7 @@ def save_group_relation_into_db(course_id, group_slug, group_name):
         group_slug (str): NodeBB group_slug for edX course.
         group_name (str): NodeBB group_name for edX course.
     """
-    
+
     group_relation = EdxNodeBBCategory.objects.filter(course_key=course_id).first()
 
     if group_relation:
@@ -155,13 +155,13 @@ def get_course_id_from_group_slug(group_slug):
         group_slug (str): NodeBB group_slug for edX course.
 
     Returns:
-        CourseKey: returns course_id stored in the model corresponding to group_slug        
+        CourseKey: returns course_id stored in the model corresponding to group_slug
     """
     category_relation = EdxNodeBBCategory.objects.filter(nodebb_group_slug=group_slug).first()
 
     if category_relation:
         return category_relation.course_key
-    
+
     return None
 
 
@@ -180,7 +180,7 @@ def get_edx_user_from_nodebb_uid(nodebb_uid):
     if user_relation:
         return user_relation.edx_uid
 
-    return None    
+    return None
 
 
 def save_course_enrollment_in_db(edx_user, course_id):
@@ -189,7 +189,7 @@ def save_course_enrollment_in_db(edx_user, course_id):
 
     Args:
         edx_user (User): Edx User to save course enrollment.
-        course_id (Course Key): Edx Course Key to save course enrollment.    
+        course_id (Course Key): Edx Course Key to save course enrollment.
     """
     course_enrollment = EdxNodeBBEnrollment.objects.filter(edx_uid=edx_user, course_key=course_id)
 
@@ -204,10 +204,9 @@ def remove_course_enrollment_from_db(edx_user, course_id):
     """
     Deletes course enrollment details from EdxNodeBBEnrollment table.
 
-    
     Args:
         edx_user (User): Edx User to delete course enrollment.
-        course_id (Course Key): Edx Course Key to delete course enrollment.    
+        course_id (Course Key): Edx Course Key to delete course enrollment.
     """
     course_enrollment = EdxNodeBBEnrollment.objects.filter(edx_uid=edx_user, course_key=course_id)
 
