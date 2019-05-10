@@ -2,7 +2,7 @@
 
 Clone this repo into `openedx_nodebb_discussion` folder using the given command
 
-`git clone https://github.com/arbisoft/openedx-nodebb-discussion.git openedx_nodebb_discussion`
+`git clone https://github.com/edly-io/openedx-nodebb-discussion.git openedx_nodebb_discussion`
 
 ---
 
@@ -53,7 +53,7 @@ Add the following dictionary at the end of `lms.auth.json` and `cms.auth.json`
     "OPENEDX_NODEBB_DISCUSSION": {
         "DISCUSSION_JWT_SECRET": "<Your secret>",
         "DISCUSSION_JWT_ALGORITHM": "<Your algorithm>",
-        "NODEBB_API_TOKEN": "<Your NodeBB Write Api Token>",
+        "NODEBB_MASTER_TOKEN": "<Your NodeBB Write Api Token>",
     }
 }
 ```

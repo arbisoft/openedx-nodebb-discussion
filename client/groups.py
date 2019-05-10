@@ -7,8 +7,11 @@ from __future__ import unicode_literals
 
 from openedx.features.openedx_nodebb_discussion.client import Client
 from openedx.features.openedx_nodebb_discussion.client.utils import (
-    save_course_enrollment_in_db, get_edx_user_from_nodebb_uid,
-    get_course_id_from_group_slug, remove_course_enrollment_from_db,
+    get_course_id_from_group_slug,
+    get_edx_user_from_nodebb_uid,
+    get_nodebb_category_relation_from_course_id,
+    remove_course_enrollment_from_db,
+    save_course_enrollment_in_db,
     save_group_relation_into_db
 )
 
@@ -70,7 +73,8 @@ class NodeBBGroup(Client):
         if response_code == 200:
             course_id = get_course_id_from_group_slug(group_slug)
             edx_user = get_edx_user_from_nodebb_uid(uid)
-            save_course_enrollment_in_db(edx_user, course_id)
+            nodebb_cid = get_nodebb_category_relation_from_course_id(course_id)
+            save_course_enrollment_in_db(edx_user, course_id, nodebb_cid)
 
         return response_code, json_response
 
@@ -91,6 +95,7 @@ class NodeBBGroup(Client):
         if response_code == 200:
             course_id = get_course_id_from_group_slug(group_slug)
             edx_user = get_edx_user_from_nodebb_uid(uid)
-            remove_course_enrollment_from_db(edx_user, course_id)
+            nodebb_cid = get_nodebb_category_relation_from_course_id(course_id)
+            remove_course_enrollment_from_db(edx_user, course_id, nodebb_cid)
 
         return response_code, json_response

@@ -7,7 +7,7 @@ class NodeBBTab(EnrolledTab):
     """
     NodeBBTab for Courses it will contain the embeded view of NodeBB Forum
     """
-
+    # TODO: Edx Currently Using type as a Tab_Type but it is a keyword so change it. If found some better way.
     name = 'openedx_nodebb_discussion'
     type = 'openedx_nodebb_discussion'
     title = ugettext_noop('NodeBB Discussion')

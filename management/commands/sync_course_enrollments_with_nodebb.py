@@ -3,8 +3,8 @@ Django management command to join groups at NodeBB corresponding to edX course e
 """
 from logging import getLogger
 
-from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
+from django.core.management.base import BaseCommand
 from openedx.features.openedx_nodebb_discussion.client.tasks import task_join_group_on_nodebb
 from openedx.features.openedx_nodebb_discussion.models import EdxNodeBBCategory, EdxNodeBBEnrollment
 from student.models import CourseEnrollment

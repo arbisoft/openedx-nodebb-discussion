@@ -3,7 +3,6 @@ Contains the MiddleWare Class for NodeBB
 """
 
 import jwt
-
 from django.conf import settings as django_settings
 
 
