@@ -5,8 +5,8 @@ from logging import getLogger
 
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
-from openedx.features.openedx_nodebb_discussion.client.tasks import task_join_group_on_nodebb
-from openedx.features.openedx_nodebb_discussion.models import EdxNodeBBCategory, EdxNodeBBEnrollment
+from openedx.features.openedx_edly_discussion.client.tasks import task_join_group_on_nodebb
+from openedx.features.openedx_edly_discussion.models import EdxNodeBBCategory, EdxNodeBBEnrollment
 from student.models import CourseEnrollment
 
 log = getLogger(__name__)

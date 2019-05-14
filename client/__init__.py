@@ -1,1 +1,1 @@
-from openedx.features.openedx_nodebb_discussion.client.client import Client
+from openedx.features.openedx_edly_discussion.client.client import Client

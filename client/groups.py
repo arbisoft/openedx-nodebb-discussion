@@ -5,8 +5,8 @@ Contains the Group Class for NodeBB Client
 """
 from __future__ import unicode_literals
 
-from openedx.features.openedx_nodebb_discussion.client import Client
-from openedx.features.openedx_nodebb_discussion.client.utils import (
+from openedx.features.openedx_edly_discussion.client import Client
+from openedx.features.openedx_edly_discussion.client.utils import (
     get_course_id_from_group_slug,
     get_edx_user_from_nodebb_uid,
     get_nodebb_category_relation_from_course_id,

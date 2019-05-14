@@ -3,7 +3,7 @@ Contains some common functions of the related app
 to store and retrieve data from database.
 """
 from django.contrib.auth.models import User
-from openedx.features.openedx_nodebb_discussion.models import EdxNodeBBCategory, EdxNodeBBEnrollment, EdxNodeBBUser
+from openedx.features.openedx_edly_discussion.models import EdxNodeBBCategory, EdxNodeBBEnrollment, EdxNodeBBUser
 
 
 def save_user_relation_into_db(username, nodebb_uid):

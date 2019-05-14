@@ -5,8 +5,8 @@ Contains the User Class for NodeBB Client
 """
 from __future__ import unicode_literals
 
-from openedx.features.openedx_nodebb_discussion.client import Client
-from openedx.features.openedx_nodebb_discussion.client.utils import (
+from openedx.features.openedx_edly_discussion.client import Client
+from openedx.features.openedx_edly_discussion.client.utils import (
     get_nodebb_uid_from_username,
     save_user_relation_into_db
 )

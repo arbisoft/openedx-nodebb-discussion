@@ -4,8 +4,8 @@ Defines the URL routes for this app.
 
 from django.conf.urls import url
 
-from .views import NodebbDashboardView
+from .views import EdlyDiscussionDashboardView
 
 urlpatterns = [
-    url(r'', NodebbDashboardView.as_view(), name='nodebb_dashboard'),
+    url(r'', EdlyDiscussionDashboardView.as_view(), name='edly_discussion_dashboard'),
 ]

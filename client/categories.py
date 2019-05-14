@@ -4,9 +4,9 @@
 Contains the Category Class for NodeBB Client
 """
 
-from openedx.features.openedx_nodebb_discussion.client import Client
-from openedx.features.openedx_nodebb_discussion.client.constants import DEFAULT_GROUPS, DEFAULT_PRIVILEGES
-from openedx.features.openedx_nodebb_discussion.client.utils import save_category_relation_into_db
+from openedx.features.openedx_edly_discussion.client import Client
+from openedx.features.openedx_edly_discussion.client.constants import DEFAULT_GROUPS, DEFAULT_PRIVILEGES
+from openedx.features.openedx_edly_discussion.client.utils import save_category_relation_into_db
 
 
 class NodeBBCategory(Client):

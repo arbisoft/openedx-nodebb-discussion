@@ -7,7 +7,7 @@ import urlparse
 import requests
 
 from django.conf import settings as django_settings
-from openedx.features.openedx_nodebb_discussion.client.constants import BAD_REQUEST, CONNECTION_ERROR, NODEBB_ADMIN_UID
+from openedx.features.openedx_edly_discussion.client.constants import BAD_REQUEST, CONNECTION_ERROR, NODEBB_ADMIN_UID
 
 
 class Client(object):
@@ -19,10 +19,10 @@ class Client(object):
         self._configure()
 
     def _configure(self):
-        self.endpoint = django_settings.NODEBB_SETTINGS['URL']
+        self.endpoint = django_settings.EDLY_DISCUSSION_SETTINGS['URL']
         self.admin_uid = NODEBB_ADMIN_UID
         self.headers = {
-            'Authorization': 'Bearer {}'.format(django_settings.OPENEDX_NODEBB_DISCUSSION['NODEBB_MASTER_TOKEN']),
+            'Authorization': 'Bearer {}'.format(django_settings.EDLY_DISCUSSION_SECRETS['API_MASTER_TOKEN']),
             'Content-Type': 'application/json'
         }
 

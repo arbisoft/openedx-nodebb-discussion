@@ -5,11 +5,11 @@ from logging import getLogger
 
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
-from openedx.features.openedx_nodebb_discussion.client.tasks import (
+from openedx.features.openedx_edly_discussion.client.tasks import (
     task_create_user_on_nodebb,
     task_update_user_profile_on_nodebb
 )
-from openedx.features.openedx_nodebb_discussion.models import EdxNodeBBUser
+from openedx.features.openedx_edly_discussion.models import EdxNodeBBUser
 from student.models import UserProfile
 
 log = getLogger(__name__)

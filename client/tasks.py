@@ -6,10 +6,10 @@ from logging import getLogger
 from celery.task import task
 from django.conf import settings
 from opaque_keys.edx.locator import CourseLocator
-from openedx.features.openedx_nodebb_discussion.client.categories import NodeBBCategory
-from openedx.features.openedx_nodebb_discussion.client.groups import NodeBBGroup
-from openedx.features.openedx_nodebb_discussion.client.users import NodeBBUser
-from openedx.features.openedx_nodebb_discussion.client.utils import (
+from openedx.features.openedx_edly_discussion.client.categories import NodeBBCategory
+from openedx.features.openedx_edly_discussion.client.groups import NodeBBGroup
+from openedx.features.openedx_edly_discussion.client.users import NodeBBUser
+from openedx.features.openedx_edly_discussion.client.utils import (
     get_category_id_from_course_id,
     get_group_name_from_course_id,
     get_group_slug_from_category_id,
