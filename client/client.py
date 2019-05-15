@@ -2,30 +2,31 @@
 Base class which contains the basic methods to interaction with the write api of NodeBB.
 """
 import json
+import urlparse
 
 import requests
-import urlparse
-from django.conf import settings as django_settings
 
-NODEBB_ADMIN_UID = 1
+from django.conf import settings as django_settings
+from openedx.features.openedx_edly_discussion.client.constants import BAD_REQUEST, CONNECTION_ERROR, NODEBB_ADMIN_UID
 
 
 class Client(object):
     """
     Client Class responsible to make connection with NodeBB and perform all calls.
     """
+
     def __init__(self):
         self._configure()
 
     def _configure(self):
-        self.endpoint = django_settings.NODEBB_SETTINGS['URL']
+        self.endpoint = django_settings.EDLY_DISCUSSION_SETTINGS['URL']
         self.admin_uid = NODEBB_ADMIN_UID
         self.headers = {
-            'Authorization': 'Bearer {}'.format(django_settings.OPENEDX_NODEBB_DISCUSSION['NODEBB_API_TOKEN']),
+            'Authorization': 'Bearer {}'.format(django_settings.EDLY_DISCUSSION_SECRETS['API_MASTER_TOKEN']),
             'Content-Type': 'application/json'
         }
 
-    def _request(self, method, path, **kwargs):
+    def _call(self, method, path, **kwargs):
         """
         Hidden Method of Client this function will generate all of the Api Call's and return response.
 
@@ -40,24 +41,26 @@ class Client(object):
         if '_uid' not in kwargs:
             kwargs.update({'_uid': self.admin_uid})
 
-        response = requests.request(
-            method,
-            urlparse.urljoin(self.endpoint, path),
-            headers=self.headers,
-            data=json.dumps(kwargs)
-        )
-        status_code, reason = response.status_code, response.reason
-
-        if reason != 'OK':
-            return status_code, reason
-
         try:
-            json_response = response.json()
-            if 'payload' in json_response:
-                json_response = json_response['payload']
-            return status_code, json_response
-        except ValueError:
-            return status_code, {}
+            response = requests.request(
+                method,
+                urlparse.urljoin(self.endpoint, path),
+                headers=self.headers,
+                data=json.dumps(kwargs)
+            )
+            status_code, response_msg = response.status_code, response.json()
+            try:
+                if 'payload' in response_msg:
+                    response_msg = response_msg['payload']
+            except ValueError:
+                response_msg = {}
+
+        except requests.exceptions.ConnectionError as err:
+            status_code, response_msg = CONNECTION_ERROR, err
+        except requests.exceptions.RequestException as err:
+            status_code, response_msg = BAD_REQUEST, err
+
+        return status_code, response_msg
 
     def post(self, path, **kwargs):
         """
@@ -70,7 +73,7 @@ class Client(object):
         Returns:
             tuple: Tuple in the form (response_code, json_response) received from requests call.
         """
-        return self._request('POST', path, **kwargs)
+        return self._call('POST', path, **kwargs)
 
     def put(self, path, **kwargs):
         """
@@ -83,7 +86,7 @@ class Client(object):
         Returns:
             tuple: Tuple in the form (response_code, json_response) received from requests call.
         """
-        return self._request('PUT', path, **kwargs)
+        return self._call('PUT', path, **kwargs)
 
     def delete(self, path, **kwargs):
         """
@@ -96,4 +99,4 @@ class Client(object):
         Returns:
             tuple: Tuple in the form (response_code, json_response) received from requests call.
         """
-        return self._request('DELETE', path, **kwargs)
+        return self._call('DELETE', path, **kwargs)
