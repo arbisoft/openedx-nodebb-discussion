@@ -1,16 +1,10 @@
 # Configuring openedx_edly_discussion in your edx platform through script (short way)
 Just navigate to your `lms-shell`
-and download the following script file using the following command in the `edx-platform` directory
+and run the following command in the `edx-platform` directory
 
-`curl -o integrator.sh https://raw.githubusercontent.com/edly-io/openedx-edly-discussion/add_configuration_scripts/scripts/integrator.sh`
-
-Then change the permissions of the downloaded file
-
- `sudo chmod +x integrator.sh`
-
-Now execute the script
-
-`./integrator.sh`
+```
+curl https://raw.githubusercontent.com/edly-io/openedx-edly-discussion/add_configuration_scripts/scripts/integrator.sh | bash
+```
 
 After that do the following steps
 
