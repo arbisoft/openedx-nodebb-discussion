@@ -1,4 +1,78 @@
-# Manual to add openedx_edly_discusson in your edx platform
+# Configuring openedx_edly_discussion in your edx platform through script (short way)
+Just navigate to your `lms-shell`
+and download the following script file using the following command in the `edx-platform` directory
+
+`curl -o integrator.sh https://raw.githubusercontent.com/edly-io/openedx-edly-discussion/add_configuration_scripts/scripts/integrator.sh`
+
+Then change the permissions of the downloaded file
+
+ `sudo chmod +x integrator.sh`
+
+Now execute the script
+
+`./integrator.sh`
+
+After that do the following steps
+
+---
+
+Add `ENABLE_EDLY_DISCUSSION` flag in the `FEATURES` in the following files
+
+
+- lms.env.json
+- cms.env.json
+
+
+and set their values to   `true`
+
+```
+FEATURES = {
+    ...
+    "ENABLE_EDLY_DISCUSSION": true,
+}
+```
+---
+
+Add the following dictionary at the end of `lms.env.json` and `cms.env.json`
+
+```
+{
+    ...
+    ...
+    "EDLY_DISCUSSION_SETTINGS": {
+        "URL": "<YOUR NODEBB URL>",
+        "DOMAIN": "<YOUR NODEBB DOMAIN>"
+    }
+}
+```
+
+
+---
+Add the following dictionary at the end of `lms.auth.json` and `cms.auth.json`
+
+```
+{
+    ...
+    ...
+    "EDLY_DISCUSSION_SECRETS": {
+        "DISCUSSION_JWT_SECRET": "<Your secret>",
+        "DISCUSSION_JWT_ALGORITHM": "<Your algorithm>",
+        "API_MASTER_TOKEN": "<Your NodeBB Write Api Token>",
+    }
+}
+```
+---
+After that restart `lms` and `studio`
+
+---
+To enable the `Edly Discussion` tab in course, you add the "openedx_edly_discussion" key to the Advanced Module List
+ on the Advanced Settings page of your course from studio.
+
+
+
+
+
+# Configuring openedx_edly_discusson in your edx platform manually
 
 Clone this repo into `openedx_edly_discussion` folder using the given command
 
@@ -140,6 +214,9 @@ To run migrations run the following commands
 
 ---
 
+After that restart your `lms` and `studio`
+
+---
+
 To enable the `Edly Discussion` tab in course, you add the "openedx_edly_discussion" key to the Advanced Module List
  on the Advanced Settings page of your course from studio.
- 
