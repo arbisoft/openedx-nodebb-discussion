@@ -1,4 +1,7 @@
-# Configuring openedx_edly_discussion in your edx platform through script (short way)
+# Configuring openedx_edly_discussion in your edx platform
+
+### Automated Way
+
 Just navigate to your `lms-shell`
 and run the following command in the `edx-platform` directory
 
@@ -12,12 +15,10 @@ After that do the following steps
 
 Add `ENABLE_EDLY_DISCUSSION` flag in the `FEATURES` in the following files
 
-
 - lms.env.json
 - cms.env.json
 
-
-and set their values to   `true`
+and set their values to `true`
 
 ```
 FEATURES = {
@@ -25,6 +26,7 @@ FEATURES = {
     "ENABLE_EDLY_DISCUSSION": true,
 }
 ```
+
 ---
 
 Add the following dictionary at the end of `lms.env.json` and `cms.env.json`
@@ -40,8 +42,8 @@ Add the following dictionary at the end of `lms.env.json` and `cms.env.json`
 }
 ```
 
-
 ---
+
 Add the following dictionary at the end of `lms.auth.json` and `cms.auth.json`
 
 ```
@@ -55,18 +57,17 @@ Add the following dictionary at the end of `lms.auth.json` and `cms.auth.json`
     }
 }
 ```
+
 ---
+
 After that restart `lms` and `studio`
 
 ---
+
 To enable the `Edly Discussion` tab in course, you add the "openedx_edly_discussion" key to the Advanced Module List
- on the Advanced Settings page of your course from studio.
+on the Advanced Settings page of your course from studio.
 
-
-
-
-
-# Configuring openedx_edly_discusson in your edx platform manually
+### Manual Way
 
 Clone this repo into `openedx_edly_discussion` folder using the given command
 
@@ -82,12 +83,10 @@ Copy this folder and place this at the following location in edx codebase
 
 Add `ENABLE_EDLY_DISCUSSION` flag in the `FEATURES` in the following files
 
-
 - lms.env.json
 - cms.env.json
 
-
-and set their values to   `true`
+and set their values to `true`
 
 ```
 FEATURES = {
@@ -95,6 +94,7 @@ FEATURES = {
     "ENABLE_EDLY_DISCUSSION": true,
 }
 ```
+
 ---
 
 Add the following dictionary at the end of `lms.env.json` and `cms.env.json`
@@ -110,8 +110,8 @@ Add the following dictionary at the end of `lms.env.json` and `cms.env.json`
 }
 ```
 
-
 ---
+
 Add the following dictionary at the end of `lms.auth.json` and `cms.auth.json`
 
 ```
@@ -125,6 +125,7 @@ Add the following dictionary at the end of `lms.auth.json` and `cms.auth.json`
     }
 }
 ```
+
 ---
 
 Add the following lines at the end of the `lms/envs/aws.py` and `cms/envs/aws.py` files
@@ -135,15 +136,14 @@ EDLY_DISCUSSION_SECRETS = AUTH_TOKENS.get("EDLY_DISCUSSION_SECRETS", {})
 EDLY_DISCUSSION_SETTINGS = ENV_TOKENS.get("EDLY_DISCUSSION_SETTINGS", None)
 ```
 
-
-**Note:** If you are using edx release `ironwood` then instead of making changes in `aws.py` 
-make these changes in `lms/envs/production.py` and `cms/evns/production.py` as `aws.py` file has been 
+**Note:** If you are using edx release `ironwood` then instead of making changes in `aws.py`
+make these changes in `lms/envs/production.py` and `cms/evns/production.py` as `aws.py` file has been
 depricated in `ironwood` edx release.
 
 ---
 
-To add `openedx_edly_discussion` app into the installed apps add the 
-following line in the `INSTALLED_APPS` list present in `lms/common.py` and 
+To add `openedx_edly_discussion` app into the installed apps add the
+following line in the `INSTALLED_APPS` list present in `lms/common.py` and
 `cms/common.py` file.
 
 ```
@@ -191,11 +191,9 @@ After that change the `version number` which is available in the same file for e
 
 `/edx/app/edxapp/edx-platform#`
 
-
-Here, run the following command 
+Here, run the following command
 
 `pip install -e .`
-
 
 ---
 
@@ -213,4 +211,4 @@ After that restart your `lms` and `studio`
 ---
 
 To enable the `Edly Discussion` tab in course, you add the "openedx_edly_discussion" key to the Advanced Module List
- on the Advanced Settings page of your course from studio.
+on the Advanced Settings page of your course from studio.
