@@ -1,214 +1,85 @@
-# Configuring openedx_edly_discussion in your edx platform
+<h1 align="center">
+	<a href="https://edly.io/"><img width="200" src="https://user-images.githubusercontent.com/42185078/58631048-bd3f7c00-82fa-11e9-8473-01f3a454750b.png" alt="Edly"></a>
+</h1>
 
-### Automated Way
+# openedx-edly-discussion
 
-Just navigate to your `lms-shell`
-and run the following command in the `edx-platform` directory
+It's an open source Django plugin available for Open edX to use NodeBB discussion forum as its own discussion app. This plugin works along with NodeBB plugin i.e. nodebb-plugin-openedx-discussion.
 
+![edly_discussion](https://user-images.githubusercontent.com/42185078/58632262-80758400-82fe-11e9-8d40-6a0260623bf9.jpg)
+
+## Features
+
+* Provides a fully functional embed view of NodeBB as course discussions in edX.  
+* Synchronization of Open edX with NodeBB to keep the discussion experience seamless. 
+  *  Whenever a new user is created in edX application, the same user is also created in NodeBB application and the same goes for the courses i.e. whenever a new course is created, a corresponding category is created in NodeBB application to contain all of the course discussions in one place.
+  * It also provide a Django management command to sync existing users and courses of edX with NodeBB.
+* Session sharing is handled using JWT authentication.
+* User privileges are managed using NodeBB groups.
+  *  Course related discussions are only accessible to the enrolled users of the course.
+
+ 
+## Prerequisites
+  * Open edX (hawthorn or later) instance. ([Installation link](https://github.com/edx/devstack))
+  * NodeBB (v1.10.x or above) instance. ([Installation link](https://docs.nodebb.org/installing/os/ubuntu/))
+
+
+## Getting started
+
+### Devstack Setup
+You can either use `opendx-devstack` and apply all configurations yourself or you can simple use the pre-configured `openedx-nodebb-devstack`.
+
+  **Using openedx-devstack**
+  * Configure your fresh edX devstack instance using [configure edX repo](https://github.com/edly-io/openedx-edly-discussion/wiki/Configure-edX-repo) of openedx_edly_discussion wiki.
+  * Generate a master token for API access of NodeBB using this [link](https://github.com/edly-io/openhttps://github.com/edly-io/openedx-edly-discussion/wiki/Configure-openedx_edly_discussionedx-edly-discussion/wiki/Generating-Master-Token).
+  * Follow the [Installation guide steps](https://github.com/edly-io/nodebb-plugin-openedx-discussion/blob/master/README.md) of `nodebb-plugin-openedx-discussion` to integrate `nodebb-plugin-openedx-discussion` plugin in your NodeBB instance.
+
+ **Using openedx-nodebb-devstack**
+ * Just follow this [link](https://github.com/edly-io/openedx-nodebb-devstack/wiki/Setup-Guide) and you are  done.
+
+### Sync already created users and courses of edX with NodeBB 
+Run following shell commands from devstack directory.
+```sh
+$ make lms-shell
+$ ./manage.py lms sync_course_enrollments_with_nodebb
+$ exit
+
+$ docker-compose restart lms
 ```
-curl https://raw.githubusercontent.com/edly-io/openedx-edly-discussion/add_configuration_scripts/scripts/integrator.sh | bash
-```
 
-After that do the following steps
+
+## Enable Discussion in a Course:
+  - Open your desired course from studio
+  - Go to the Advance Settings from Settings tab of the Course
+  - Add `"openedx_edly_discussion"` to the Advance module list and save it.
+
+
+## Documentation
+
+[openedx-edly-discussion wiki](https://github.com/edly-io/openedx-edly-discussion/wiki) is the full reference for openedx-edly-discussion plugin, and includes guides for developers.
+
+## Compatibility
+
+openedx-edly-discussion supports:
+
+* Open edX (hawthorn or later)
+* NodeBB (v1.10.x or above)
+* nodebb-plugin-openedx-discussion (v0.1.0 or newer)
+
+
+## How To Contribute
+
+To contribute, please make a pull request in this repositry on Github: [openedx-edly-discussion](https://github.com/edly-io/openedx-edly-discussion). If you have any question or issue, please feel free to open an issue.
+
+
+## Contributors
+
+* [Muhammad Zeeshan](https://github.com/zee-pk)
+* [Osama Arshad](https://github.com/asamolion)
+* [Danial Malik](https://github.com/danialmalik)
+* [Hamza Farooq](https://github.com/HamzaIbnFarooq)
+* [Muhammad Umar Khan](https://github.com/mumarkhan999)
+* [Tehreem Sadat](https://github.com/tehreem-sadat)
+* [Hassan Tariq](https://github.com/imhassantariq)
 
 ---
-
-Add `ENABLE_EDLY_DISCUSSION` flag in the `FEATURES` in the following files
-
-- lms.env.json
-- cms.env.json
-
-and set their values to `true`
-
-```
-FEATURES = {
-    ...
-    "ENABLE_EDLY_DISCUSSION": true,
-}
-```
-
----
-
-Add the following dictionary at the end of `lms.env.json` and `cms.env.json`
-
-```
-{
-    ...
-    ...
-    "EDLY_DISCUSSION_SETTINGS": {
-        "URL": "<YOUR NODEBB URL>",
-        "DOMAIN": "<YOUR NODEBB DOMAIN>"
-    }
-}
-```
-
----
-
-Add the following dictionary at the end of `lms.auth.json` and `cms.auth.json`
-
-```
-{
-    ...
-    ...
-    "EDLY_DISCUSSION_SECRETS": {
-        "DISCUSSION_JWT_SECRET": "<Your secret>",
-        "DISCUSSION_JWT_ALGORITHM": "<Your algorithm>",
-        "API_MASTER_TOKEN": "<Your NodeBB Write Api Token>",
-    }
-}
-```
-
----
-
-After that restart `lms` and `studio`
-
----
-
-To enable the `Edly Discussion` tab in course, you add the "openedx_edly_discussion" key to the Advanced Module List
-on the Advanced Settings page of your course from studio.
-
-### Manual Way
-
-Clone this repo into `openedx_edly_discussion` folder using the given command
-
-`git clone https://github.com/edly-io/openedx-edly-discussion.git openedx_edly_discussion`
-
----
-
-Copy this folder and place this at the following location in edx codebase
-
-`../edx-platform/openedx/features/`
-
----
-
-Add `ENABLE_EDLY_DISCUSSION` flag in the `FEATURES` in the following files
-
-- lms.env.json
-- cms.env.json
-
-and set their values to `true`
-
-```
-FEATURES = {
-    ...
-    "ENABLE_EDLY_DISCUSSION": true,
-}
-```
-
----
-
-Add the following dictionary at the end of `lms.env.json` and `cms.env.json`
-
-```
-{
-    ...
-    ...
-    "EDLY_DISCUSSION_SETTINGS": {
-        "URL": "<YOUR NODEBB URL>",
-        "DOMAIN": "<YOUR NODEBB DOMAIN>"
-    }
-}
-```
-
----
-
-Add the following dictionary at the end of `lms.auth.json` and `cms.auth.json`
-
-```
-{
-    ...
-    ...
-    "EDLY_DISCUSSION_SECRETS": {
-        "DISCUSSION_JWT_SECRET": "<Your secret>",
-        "DISCUSSION_JWT_ALGORITHM": "<Your algorithm>",
-        "API_MASTER_TOKEN": "<Your NodeBB Write Api Token>",
-    }
-}
-```
-
----
-
-Add the following lines at the end of the `lms/envs/aws.py` and `cms/envs/aws.py` files
-
-```
-##################### Openedx Edly Discussion Secrets ###########
-EDLY_DISCUSSION_SECRETS = AUTH_TOKENS.get("EDLY_DISCUSSION_SECRETS", {})
-EDLY_DISCUSSION_SETTINGS = ENV_TOKENS.get("EDLY_DISCUSSION_SETTINGS", None)
-```
-
-**Note:** If you are using edx release `ironwood` then instead of making changes in `aws.py`
-make these changes in `lms/envs/production.py` and `cms/evns/production.py` as `aws.py` file has been
-depricated in `ironwood` edx release.
-
----
-
-To add `openedx_edly_discussion` app into the installed apps add the
-following line in the `INSTALLED_APPS` list present in `lms/common.py` and
-`cms/common.py` file.
-
-```
-INSTALLED_APPS = [
-    ...
-    'openedx.features.openedx_edly_discussion',
-]
-```
-
----
-
-Append these urls in `lms/urls.py`
-
-```
-# Add edly discussion endpoints
-if settings.FEATURES.get('ENABLE_EDLY_DISCUSSION'):
-    urlpatterns += [
-        url(
-            r'^courses/{}/edly'.format(
-                settings.COURSE_ID_PATTERN,
-            ),
-            include('openedx.features.openedx_edly_discussion.urls'),
-            name='edly_discussion_endpoints',
-        ),
-    ]
-```
-
----
-
-Add a entry point for our discussion tab in the following file
-`../edx-platfrom/setup.py`
-
-```
-entry_points={
-        "openedx.course_tab": [
-            "openedx_edly_discussion = openedx.features.openedx_edly_discussion.plugins:EdlyTab",
-            .....
-        ],
-}
-```
-
----
-
-After that change the `version number` which is available in the same file for example if it is `0.11` change it to `0.12` and then go to `lms-shell` and your directory path should be like this
-
-`/edx/app/edxapp/edx-platform#`
-
-Here, run the following command
-
-`pip install -e .`
-
----
-
-To run migrations run the following commands
-
-```
-./manage.py lms makemigrations openedx_edly_discussion
-./mangae.py lms migrate openedx_edly_discussion
-```
-
----
-
-After that restart your `lms` and `studio`
-
----
-
-To enable the `Edly Discussion` tab in course, you add the "openedx_edly_discussion" key to the Advanced Module List
-on the Advanced Settings page of your course from studio.
