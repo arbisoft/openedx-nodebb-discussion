@@ -1,6 +1,7 @@
 """
 Celery tasks to handle api requests of write api of NodeBB.
 """
+import random
 from logging import getLogger
 
 from celery.task import task
@@ -17,8 +18,7 @@ from openedx.features.openedx_edly_discussion.client.utils import (
     get_nodebb_uid_from_username
 )
 
-RETRY_DELAY = 60
-
+MAX_RETRIES = 3
 log = getLogger(__name__)
 
 
@@ -45,7 +45,7 @@ def handle_response(response_details):
         In case of any internal server error, retry that task again.
         """
         log.warning('Retrying: {} task for {}: {}'.format(task_name, job_type, entity))
-        caller.retry()
+        caller.retry(exc=None, countdown=int(random.uniform(2, 4) ** caller.request.retries))
     elif status_code >= 400:
         """
         In case of any unauthorized request we don't need to retry the task so we log error.
@@ -56,7 +56,7 @@ def handle_response(response_details):
         log.info('Success: {} task for {}: {}'.format(task_name, job_type, entity))
 
 
-@task(default_retry_delay=RETRY_DELAY, max_retries=None, routing_key=settings.HIGH_PRIORITY_QUEUE)
+@task(max_retries=MAX_RETRIES, routing_key=settings.HIGH_PRIORITY_QUEUE)
 def task_create_user_on_nodebb(**user_data):
     """
     Creates user on NodeBB.
@@ -78,7 +78,7 @@ def task_create_user_on_nodebb(**user_data):
     handle_response(response_details)
 
 
-@task(default_retry_delay=RETRY_DELAY, max_retries=None, routing_key=settings.HIGH_PRIORITY_QUEUE)
+@task(max_retries=MAX_RETRIES, routing_key=settings.HIGH_PRIORITY_QUEUE)
 def task_update_user_profile_on_nodebb(username, **user_data):
     """
     Sync user profile on NodeBB.
@@ -101,7 +101,7 @@ def task_update_user_profile_on_nodebb(username, **user_data):
     handle_response(response_details)
 
 
-@task(default_retry_delay=RETRY_DELAY, max_retries=None)
+@task(max_retries=MAX_RETRIES)
 def task_delete_user_from_nodebb(username):
     """
     Deletes user from NodeBB.
@@ -123,7 +123,7 @@ def task_delete_user_from_nodebb(username):
     handle_response(response_details)
 
 
-@task(default_retry_delay=RETRY_DELAY, max_retries=None)
+@task(max_retries=MAX_RETRIES)
 def task_create_category_on_nodebb(**course_data):
     """
     Creates a category corresponding to an edX course.
@@ -154,7 +154,7 @@ def task_create_category_on_nodebb(**course_data):
         _task_create_group_on_nodebb.delay(**course_data)
 
 
-@task(default_retry_delay=RETRY_DELAY, max_retries=None)
+@task(max_retries=MAX_RETRIES)
 def _task_create_group_on_nodebb(**group_data):
     """
     Creates a group on NodeBB.
@@ -184,7 +184,7 @@ def _task_create_group_on_nodebb(**group_data):
         _task_delete_default_permission_of_category_on_nodebb.delay(**group_data)
 
 
-@task(default_retry_delay=RETRY_DELAY, max_retries=None)
+@task(max_retries=MAX_RETRIES)
 def _task_delete_default_permission_of_category_on_nodebb(**group_data):
     """
     Deletes default privileges of category on NodeBB.
@@ -211,7 +211,7 @@ def _task_delete_default_permission_of_category_on_nodebb(**group_data):
         _task_add_course_group_permission_of_category_on_nodebb.delay(**group_data)
 
 
-@task(default_retry_delay=RETRY_DELAY, max_retries=None)
+@task(max_retries=MAX_RETRIES)
 def _task_add_course_group_permission_of_category_on_nodebb(**group_data):
     """
     Add custom group permission of category on NodeBB.
@@ -236,7 +236,7 @@ def _task_add_course_group_permission_of_category_on_nodebb(**group_data):
     handle_response(response_details)
 
 
-@task(default_retry_delay=RETRY_DELAY, max_retries=None)
+@task(max_retries=MAX_RETRIES)
 def task_delete_category_from_nodebb(category_id):
     """
     Deletes category from NodeBB.
@@ -261,7 +261,7 @@ def task_delete_category_from_nodebb(category_id):
         _task_delete_group_from_nodebb.delay(category_id)
 
 
-@task(default_retry_delay=RETRY_DELAY, max_retries=None)
+@task(max_retries=MAX_RETRIES)
 def _task_delete_group_from_nodebb(category_id):
     """
     Deletes group from NodeBB.
@@ -284,7 +284,7 @@ def _task_delete_group_from_nodebb(category_id):
     handle_response(response_details)
 
 
-@task(default_retry_delay=RETRY_DELAY, max_retries=None)
+@task(max_retries=MAX_RETRIES)
 def task_join_group_on_nodebb(username, **group_data):
     """
     Register the user in NodeBB group.
@@ -310,7 +310,7 @@ def task_join_group_on_nodebb(username, **group_data):
     handle_response(response_details)
 
 
-@task(default_retry_delay=RETRY_DELAY, max_retries=None)
+@task(max_retries=MAX_RETRIES)
 def task_unjoin_group_on_nodebb(username, **group_data):
     """
     Unregister the user from NodeBB group.
