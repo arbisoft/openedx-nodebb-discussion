@@ -41,15 +41,6 @@ def create_and_update_user_on_nodebb(sender, instance, created, update_fields, *
             'joindate': instance.date_joined.strftime('%s')
         }
         task_create_user_on_nodebb.delay(**user_data)
-    elif update_fields and 'last_login' not in update_fields:
-        """
-        On login `last_login` field is changed. To ignore this change we used this check.
-        We are expecting last_login will never changed from django admin panel.
-        """
-        user_data = {
-            'fullname': '{} {}'.format(instance.first_name, instance.last_name)
-        }
-        task_update_user_profile_on_nodebb.delay(username=instance.username, **user_data)
 
 
 @receiver(post_save, sender=UserProfile)
